@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>태양광발전 수익 관리 시스템</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0d1117;
+  --bg2: #161b22;
+  --bg3: #1c2128;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text2: #8b949e;
+  --text3: #6e7681;
+  --solar: #f0a500;
+  --solar2: #ffc947;
+  --rec: #3fb950;
+  --rec2: #56d364;
+  --accent: #58a6ff;
+  --danger: #f85149;
+  --warn: #d29922;
+  --mono: 'DM Mono', monospace;
+  --sans: 'Noto Sans KR', sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; }
+
+/* NAV */
+nav { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; gap: 0; height: 52px; position: sticky; top: 0; z-index: 100; }
+.nav-logo { font-family: var(--mono); font-size: 14px; color: var(--solar); letter-spacing: -0.02em; margin-right: 32px; display: flex; align-items: center; gap: 8px; }
+.nav-logo::before { content: '☀'; font-size: 18px; }
+.nav-tabs { display: flex; gap: 0; height: 100%; }
+.nav-tab { padding: 0 16px; height: 100%; display: flex; align-items: center; font-size: 13px; color: var(--text2); cursor: pointer; border-bottom: 2px solid transparent; transition: all .2s; white-space: nowrap; }
+.nav-tab:hover { color: var(--text); }
+.nav-tab.active { color: var(--text); border-bottom-color: var(--solar); }
+.nav-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.goal-badge { font-family: var(--mono); font-size: 11px; color: var(--text3); background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; padding: 4px 12px; }
+
+/* LAYOUT */
+.page { display: none; padding: 24px; max-width: 1200px; margin: 0 auto; }
+.page.active { display: block; }
+
+/* CARDS */
+.card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 20px; }
+.card-title { font-size: 11px; font-weight: 500; color: var(--text3); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 16px; }
+
+/* KPI GRID */
+.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+.kpi-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; }
+.kpi-label { font-size: 11px; color: var(--text3); letter-spacing: 0.06em; margin-bottom: 8px; }
+.kpi-value { font-family: var(--mono); font-size: 22px; font-weight: 500; line-height: 1; }
+.kpi-sub { font-size: 11px; color: var(--text3); margin-top: 6px; }
+.kpi-delta { font-size: 11px; margin-top: 4px; font-family: var(--mono); }
+.kpi-delta.up { color: var(--rec); }
+.kpi-delta.down { color: var(--danger); }
+
+/* PROGRESS BAR */
+.progress-wrap { background: var(--bg3); border-radius: 4px; height: 8px; overflow: hidden; margin-top: 10px; }
+.progress-bar { height: 100%; border-radius: 4px; transition: width .6s ease; }
+
+/* GRID LAYOUTS */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.grid-21 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px; }
+.chart-wrap { position: relative; height: 220px; }
+.chart-wrap.tall { height: 280px; }
+
+/* TABLE */
+.data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.data-table th { font-size: 11px; color: var(--text3); font-weight: 500; letter-spacing: 0.05em; padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: right; }
+.data-table th:first-child { text-align: left; }
+.data-table td { padding: 12px 12px; border-bottom: 1px solid #1c2128; text-align: right; font-family: var(--mono); font-size: 12px; }
+.data-table td:first-child { text-align: left; font-family: var(--sans); font-size: 13px; }
+.data-table tr:hover td { background: var(--bg3); }
+.data-table .total-row td { border-top: 1px solid var(--border); color: var(--solar); font-weight: 500; }
+
+/* BADGE */
+.badge { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 20px; font-family: var(--mono); }
+.badge.ok { background: rgba(63,185,80,.15); color: var(--rec); }
+.badge.pending { background: rgba(210,153,34,.15); color: var(--warn); }
+.badge.empty { background: rgba(139,148,158,.1); color: var(--text3); }
+
+/* INSIGHT CARDS */
+.insight-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+.insight { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; border-left: 3px solid; }
+.insight.blue { border-left-color: var(--accent); }
+.insight.green { border-left-color: var(--rec); }
+.insight.yellow { border-left-color: var(--solar); }
+.insight.red { border-left-color: var(--danger); }
+.insight-title { font-size: 11px; color: var(--text3); margin-bottom: 6px; font-weight: 500; }
+.insight-body { font-size: 13px; line-height: 1.6; color: var(--text2); }
+.insight-body strong { color: var(--text); }
+
+/* FORM */
+.form-section { margin-bottom: 32px; }
+.form-section-title { font-size: 13px; font-weight: 500; color: var(--text2); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+.form-section-title::before { content: ''; display: block; width: 3px; height: 14px; background: var(--solar); border-radius: 2px; }
+.form-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-label { font-size: 11px; color: var(--text3); letter-spacing: 0.04em; }
+.form-input { background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; color: var(--text); font-family: var(--mono); font-size: 13px; outline: none; transition: border-color .2s; }
+.form-input:focus { border-color: var(--solar); }
+.form-input::placeholder { color: var(--text3); }
+.form-select { background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; color: var(--text); font-size: 13px; outline: none; cursor: pointer; }
+.btn { padding: 10px 20px; border-radius: 6px; border: none; cursor: pointer; font-size: 13px; font-family: var(--sans); font-weight: 500; transition: all .2s; }
+.btn-primary { background: var(--solar); color: #000; }
+.btn-primary:hover { background: var(--solar2); }
+.btn-secondary { background: var(--bg3); color: var(--text2); border: 1px solid var(--border); }
+.btn-secondary:hover { color: var(--text); border-color: var(--text3); }
+.btn-danger { background: rgba(248,81,73,.15); color: var(--danger); border: 1px solid rgba(248,81,73,.3); }
+.btn-danger:hover { background: rgba(248,81,73,.25); }
+.btn-row { display: flex; gap: 10px; align-items: center; margin-top: 20px; }
+
+.toast { position: fixed; bottom: 24px; right: 24px; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; font-size: 13px; z-index: 1000; transform: translateY(60px); opacity: 0; transition: all .3s; box-shadow: 0 8px 24px rgba(0,0,0,.4); }
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast.success { border-left: 3px solid var(--rec); }
+.toast.error { border-left: 3px solid var(--danger); }
+
+.month-entry-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+.month-entry { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: border-color .2s; }
+.month-entry:hover { border-color: var(--solar); }
+.month-entry.active { border-color: var(--solar); background: rgba(240,165,0,.05); }
+.month-entry-label { font-weight: 500; font-size: 14px; min-width: 60px; }
+.month-entry-info { flex: 1; display: flex; gap: 20px; font-size: 12px; color: var(--text3); font-family: var(--mono); }
+.month-entry-info span { display: flex; flex-direction: column; gap: 2px; }
+.month-entry-info .val { color: var(--text2); }
+
+.rec-opt-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+.rec-opt { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 14px; cursor: pointer; transition: all .2s; }
+.rec-opt:hover { border-color: var(--rec); }
+.rec-opt-month { font-size: 12px; color: var(--text3); margin-bottom: 6px; }
+.rec-opt-val { font-family: var(--mono); font-size: 14px; color: var(--text); }
+.rec-opt-rec { font-size: 11px; color: var(--rec); margin-top: 4px; }
+
+.section-note { font-size: 12px; color: var(--text3); margin-bottom: 14px; line-height: 1.6; }
+
+/* GOAL RING */
+.goal-ring-wrap { display: flex; align-items: center; gap: 24px; padding: 4px 0; }
+.goal-ring-canvas { flex-shrink: 0; }
+.goal-ring-info { flex: 1; }
+.goal-ring-pct { font-family: var(--mono); font-size: 28px; font-weight: 500; color: var(--solar); }
+.goal-ring-label { font-size: 12px; color: var(--text3); margin-top: 4px; }
+.goal-ring-detail { margin-top: 12px; display: flex; flex-direction: column; gap: 6px; }
+.goal-detail-row { display: flex; justify-content: space-between; font-size: 12px; }
+.goal-detail-row .k { color: var(--text3); }
+.goal-detail-row .v { font-family: var(--mono); color: var(--text2); }
+
+.forecast-bar { display: flex; align-items: stretch; gap: 0; border-radius: 6px; overflow: hidden; height: 28px; margin: 8px 0; }
+.forecast-bar-fill { display: flex; align-items: center; justify-content: center; font-size: 10px; font-family: var(--mono); font-weight: 500; transition: width .5s; }
+
+.legend { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 10px; }
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text3); }
+.legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+.smp-compare-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+.smp-compare-item { background: var(--bg3); border-radius: 8px; padding: 12px 14px; border: 1px solid var(--border); }
+.smp-compare-month { font-size: 11px; color: var(--text3); margin-bottom: 4px; }
+.smp-compare-mine { font-family: var(--mono); font-size: 16px; color: var(--text); }
+.smp-compare-market { font-size: 11px; color: var(--text3); margin-top: 4px; }
+.smp-compare-diff { font-size: 11px; font-family: var(--mono); margin-top: 3px; }
+.smp-compare-diff.up { color: var(--rec); }
+.smp-compare-diff.dn { color: var(--danger); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">SOLAR MGR</div>
+  <div class="nav-tabs">
+    <div class="nav-tab active" onclick="showPage('dashboard')">📊 대시보드</div>
+    <div class="nav-tab" onclick="showPage('input')">✏️ 데이터 입력</div>
+    <div class="nav-tab" onclick="showPage('smp')">⚡ SMP 분석</div>
+    <div class="nav-tab" onclick="showPage('rec')">🌿 REC 최적화</div>
+    <div class="nav-tab" onclick="showPage('forecast')">📈 예측/목표</div>
+  </div>
+  <div class="nav-right">
+    <span class="goal-badge" id="goalBadge">연간목표: 4,000만원</span>
+  </div>
+</nav>
+
+<!-- ========== DASHBOARD ========== -->
+<div class="page active" id="page-dashboard">
+  <div class="kpi-grid" id="kpiGrid"></div>
+
+  <div class="grid-21">
+    <div class="card">
+      <div class="card-title">월별 수입 구조 (만원)</div>
+      <div class="legend">
+        <span class="legend-item"><span class="legend-dot" style="background:var(--solar)"></span>전기료수입</span>
+        <span class="legend-item"><span class="legend-dot" style="background:var(--rec)"></span>REC수입</span>
+        <span class="legend-item"><span class="legend-dot" style="background:var(--accent)"></span>합계</span>
+      </div>
+      <div class="chart-wrap"><canvas id="mainBarChart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">연간 목표 달성률</div>
+      <div id="goalRingWrap"></div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">누적 수입 추이</div>
+      <div class="chart-wrap"><canvas id="cumChart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">수입 구성 비율</div>
+      <div class="chart-wrap"><canvas id="pieChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="insight-grid" id="insightGrid"></div>
+
+  <div class="card">
+    <div class="card-title">월별 상세 데이터</div>
+    <table class="data-table" id="summaryTable"></table>
+  </div>
+</div>
+
+<!-- ========== INPUT ========== -->
+<div class="page" id="page-input">
+  <div class="grid-21">
+    <div class="card">
+      <div class="card-title">월 선택 및 데이터 입력</div>
+
+      <div class="form-section">
+        <div class="form-section-title">기간 선택</div>
+        <div class="form-grid" style="grid-template-columns:1fr 1fr 1fr">
+          <div class="form-group">
+            <label class="form-label">연도</label>
+            <select class="form-select" id="inputYear"></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">월</label>
+            <select class="form-select" id="inputMonth"></select>
+          </div>
+          <div class="form-group" style="justify-content:flex-end">
+            <label class="form-label">&nbsp;</label>
+            <button class="btn btn-secondary" onclick="loadMonthData()">불러오기</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">전기 생산 및 SMP</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">전기 생산량 (kWh)</label>
+            <input class="form-input" id="fProd" type="number" placeholder="예: 13789">
+          </div>
+          <div class="form-group">
+            <label class="form-label">SMP 단가 (원/kWh)</label>
+            <input class="form-input" id="fSmp" type="number" step="0.01" placeholder="예: 109.99">
+          </div>
+          <div class="form-group">
+            <label class="form-label">전기료 수입 (원)</label>
+            <input class="form-input" id="fElec" type="number" placeholder="자동계산 또는 직접입력" oninput="autoCalc()">
+          </div>
+        </div>
+        <div style="font-size:11px;color:var(--text3);margin-top:8px;">※ 생산량 × SMP 단가 자동계산. 계약 단가가 다를 경우 직접 입력하세요.</div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">REC 거래</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">REC 수량 (개)</label>
+            <input class="form-input" id="fRecQty" type="number" placeholder="예: 16">
+          </div>
+          <div class="form-group">
+            <label class="form-label">REC 단가 (원)</label>
+            <input class="form-input" id="fRecPrice" type="number" placeholder="예: 70800">
+          </div>
+          <div class="form-group">
+            <label class="form-label">REC 수입 (원)</label>
+            <input class="form-input" id="fRecRev" type="number" placeholder="자동계산 또는 직접입력" oninput="autoCalcRec()">
+          </div>
+        </div>
+        <div style="font-size:11px;color:var(--text3);margin-top:8px;">※ 4월처럼 아직 REC 금액이 나오지 않은 경우 비워두세요.</div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">시장 데이터 (선택)</div>
+        <div class="form-grid" style="grid-template-columns:1fr 1fr">
+          <div class="form-group">
+            <label class="form-label">시장 평균 SMP (원/kWh)</label>
+            <input class="form-input" id="fMktSmp" type="number" step="0.01" placeholder="예: 115.00">
+          </div>
+          <div class="form-group">
+            <label class="form-label">예상 일조시간 (h/월, 선택)</label>
+            <input class="form-input" id="fSun" type="number" placeholder="예: 168">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">메모</div>
+        <div class="form-group">
+          <input class="form-input" id="fNote" type="text" placeholder="이번 달 특이사항 (예: 설비점검, 이상날씨 등)">
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="saveMonth()">💾 저장</button>
+        <button class="btn btn-secondary" onclick="clearForm()">초기화</button>
+        <button class="btn btn-danger" onclick="deleteMonth()">삭제</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">입력된 데이터 목록</div>
+      <div class="month-entry-list" id="monthList"></div>
+      <div style="margin-top:16px;">
+        <div class="card-title">데이터 백업/복원</div>
+        <div class="btn-row" style="flex-wrap:wrap">
+          <button class="btn btn-secondary" onclick="exportData()">📤 JSON 내보내기</button>
+          <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">📥 JSON 가져오기</button>
+          <input type="file" id="importFile" style="display:none" accept=".json" onchange="importData(this)">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SMP ========== -->
+<div class="page" id="page-smp">
+  <div class="grid-2" style="margin-bottom:16px">
+    <div class="card">
+      <div class="card-title">SMP 단가 추이 (원/kWh)</div>
+      <div class="legend">
+        <span class="legend-item"><span class="legend-dot" style="background:var(--solar)"></span>우리 단가</span>
+        <span class="legend-item"><span class="legend-dot" style="background:var(--accent)"></span>시장 평균</span>
+      </div>
+      <div class="chart-wrap tall"><canvas id="smpLineChart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">SMP 대비 전기료 수입</div>
+      <div class="chart-wrap tall"><canvas id="smpRevenueChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-title">SMP vs 시장 평균 비교</div>
+    <div class="section-note">시장 평균 SMP를 입력한 달만 표시됩니다. 데이터 입력 시 시장 평균 SMP를 함께 입력해주세요.</div>
+    <div class="smp-compare-row" id="smpCompareRow"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">전기 생산량 추이 (kWh)</div>
+    <div class="chart-wrap"><canvas id="prodChart"></canvas></div>
+  </div>
+</div>
+
+<!-- ========== REC ========== -->
+<div class="page" id="page-rec">
+  <div class="insight-grid" style="margin-bottom:16px" id="recInsightGrid"></div>
+
+  <div class="grid-2" style="margin-bottom:16px">
+    <div class="card">
+      <div class="card-title">REC 수량 및 단가 추이</div>
+      <div class="legend">
+        <span class="legend-item"><span class="legend-dot" style="background:var(--rec)"></span>REC 수량</span>
+        <span class="legend-item"><span class="legend-dot" style="background:var(--warn)"></span>REC 단가 (백원)</span>
+      </div>
+      <div class="chart-wrap"><canvas id="recChart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">REC 수입 추이 (만원)</div>
+      <div class="chart-wrap"><canvas id="recRevChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-title">REC 판매 타이밍 최적화</div>
+    <div class="section-note">단가가 높은 달에 몰아서 판매하면 수익을 극대화할 수 있습니다. 아래는 입력된 데이터 기반의 분석입니다.</div>
+    <div id="recOptimizeContent"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">미판매 REC 현황</div>
+    <div id="recPendingContent"></div>
+  </div>
+</div>
+
+<!-- ========== FORECAST ========== -->
+<div class="page" id="page-forecast">
+  <div class="kpi-grid" id="forecastKpi"></div>
+
+  <div class="grid-2" style="margin-bottom:16px">
+    <div class="card">
+      <div class="card-title">연간 목표 달성 시뮬레이션</div>
+      <div class="chart-wrap tall"><canvas id="forecastChart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">월별 수익성 예측</div>
+      <div class="section-note">계절별 평균 일조량 패턴을 반영한 수익 예측입니다.</div>
+      <div id="forecastMonthList"></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-title">목표 달성 시나리오</div>
+    <div class="grid-3" id="scenarioGrid"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">연간 목표 설정</div>
+    <div class="form-grid" style="grid-template-columns:1fr 1fr auto; align-items:flex-end; gap:12px;">
+      <div class="form-group">
+        <label class="form-label">연간 목표 (만원)</label>
+        <input class="form-input" id="fGoal" type="number" placeholder="4000">
+      </div>
+      <div class="form-group">
+        <label class="form-label">설비 용량 (kW)</label>
+        <input class="form-input" id="fCapacity" type="number" placeholder="예: 100">
+      </div>
+      <div class="form-group">
+        <label class="form-label">&nbsp;</label>
+        <button class="btn btn-primary" onclick="saveSettings()">저장</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ======= DATA STORE =======
+const STORAGE_KEY = 'solar_mgr_v1';
+let db = { entries: {}, settings: { goal: 4000, capacity: 100 } };
+
+function load() {
+  try { const s = localStorage.getItem(STORAGE_KEY); if(s) db = JSON.parse(s); } catch(e){}
+  // seed with provided data
+  if(!Object.keys(db.entries).length) seedData();
+}
+function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); }
+
+function seedData() {
+  const seed = [
+    { year:2026, month:1, prod:null, smp:null, elec:847744, recQty:8, recPrice:70600, recRev:564800, mktSmp:null, sun:null, note:'1,2월 SMP 입력예정' },
+    { year:2026, month:2, prod:null, smp:null, elec:1216161, recQty:13, recPrice:70600, recRev:917800, mktSmp:null, sun:null, note:'1,2월 SMP 입력예정' },
+    { year:2026, month:3, prod:13789, smp:109.99, elec:1516652, recQty:16, recPrice:70800, recRev:1132800, mktSmp:null, sun:null, note:'' },
+    { year:2026, month:4, prod:14834, smp:118.92, elec:1764059, recQty:null, recPrice:null, recRev:0, mktSmp:null, sun:null, note:'4월 REC 미확정' },
+  ];
+  seed.forEach(d => { db.entries[`${d.year}-${d.month}`] = d; });
+  save();
+}
+
+// ======= HELPERS =======
+const wan = v => v != null && v !== '' ? Math.round(v/10000) : null;
+const wanFmt = v => v != null ? `${v.toLocaleString()}만` : '-';
+const numFmt = v => v != null && v !== 0 ? v.toLocaleString() : '-';
+const months = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+// Solar seasonality index (relative, summer peak in Korea)
+const seasonIdx = [0.62,0.72,0.88,1.00,1.05,1.02,0.88,0.90,0.95,0.88,0.70,0.60];
+
+function getEntries() {
+  return Object.values(db.entries).sort((a,b) => a.year !== b.year ? a.year-b.year : a.month-b.month);
+}
+function getEntry(y,m) { return db.entries[`${y}-${m}`]; }
+
+function totalIncome(e) {
+  return (e.elec||0) + (e.recRev||0);
+}
+
+// ======= CHARTS MAP =======
+const charts = {};
+function makeChart(id, config) {
+  if(charts[id]) charts[id].destroy();
+  const ctx = document.getElementById(id);
+  if(!ctx) return;
+  charts[id] = new Chart(ctx, config);
+  return charts[id];
+}
+
+const chartDefaults = {
+  responsive: true, maintainAspectRatio: false,
+  plugins: { legend: { display: false }, tooltip: { backgroundColor: '#1c2128', borderColor: '#30363d', borderWidth: 1, titleColor: '#8b949e', bodyColor: '#e6edf3', padding: 10 } },
+  scales: {
+    x: { ticks: { color: '#6e7681', font: { size: 11 } }, grid: { display: false }, border: { display: false } },
+    y: { ticks: { color: '#6e7681', font: { size: 11 } }, grid: { color: 'rgba(48,54,61,0.8)' }, border: { display: false } }
+  }
+};
+
+// ======= NAVIGATION =======
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  event.target.classList.add('active');
+  renderPage(id);
+}
+function renderPage(id) {
+  if(id==='dashboard') renderDashboard();
+  if(id==='input') renderInput();
+  if(id==='smp') renderSmp();
+  if(id==='rec') renderRec();
+  if(id==='forecast') renderForecast();
+}
+
+// ======= DASHBOARD =======
+function renderDashboard() {
+  const entries = getEntries();
+  const totalElec = entries.reduce((s,e) => s+(e.elec||0), 0);
+  const totalRec  = entries.reduce((s,e) => s+(e.recRev||0), 0);
+  const total = totalElec + totalRec;
+  const goal = (db.settings.goal||4000) * 10000;
+  const pct = Math.min(100, Math.round(total/goal*100));
+
+  // KPI
+  const last = entries[entries.length-1];
+  const prev = entries.length>1 ? entries[entries.length-2] : null;
+  const lastTotal = last ? totalIncome(last) : 0;
+  const prevTotal = prev ? totalIncome(prev) : 0;
+  const delta = prevTotal ? ((lastTotal-prevTotal)/prevTotal*100).toFixed(1) : null;
+
+  document.getElementById('kpiGrid').innerHTML = `
+    <div class="kpi-card">
+      <div class="kpi-label">누적 총수입</div>
+      <div class="kpi-value" style="color:var(--solar)">${wanFmt(wan(total))}</div>
+      <div class="kpi-sub">목표 ${(db.settings.goal||4000).toLocaleString()}만원 대비 ${pct}%</div>
+      <div class="progress-wrap"><div class="progress-bar" style="width:${pct}%;background:var(--solar)"></div></div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">전기료 수입 (SMP)</div>
+      <div class="kpi-value" style="color:var(--solar)">${wanFmt(wan(totalElec))}</div>
+      <div class="kpi-sub">전체의 ${total?Math.round(totalElec/total*100):0}%</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">REC 수입</div>
+      <div class="kpi-value" style="color:var(--rec)">${wanFmt(wan(totalRec))}</div>
+      <div class="kpi-sub">전체의 ${total?Math.round(totalRec/total*100):0}%</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">최근월 수입 (${last?last.month+'월':'-'})</div>
+      <div class="kpi-value">${wanFmt(wan(lastTotal))}</div>
+      ${delta !== null ? `<div class="kpi-delta ${parseFloat(delta)>=0?'up':'down'}">${parseFloat(delta)>=0?'▲':'▼'} ${Math.abs(delta)}% 전월대비</div>` : ''}
+    </div>
+  `;
+
+  // Main bar chart
+  const labels = entries.map(e => `${e.month}월`);
+  const elecData = entries.map(e => wan(e.elec));
+  const recData  = entries.map(e => wan(e.recRev));
+  const sumData  = entries.map(e => wan(totalIncome(e)));
+  makeChart('mainBarChart', {
+    type:'bar',
+    data:{ labels, datasets:[
+      { label:'전기료수입', data:elecData, backgroundColor:'rgba(240,165,0,0.75)', borderRadius:4, stack:'s' },
+      { label:'REC수입',   data:recData,  backgroundColor:'rgba(63,185,80,0.75)', borderRadius:4, stack:'s' },
+    ]},
+    options:{ ...chartDefaults,
+      plugins:{ ...chartDefaults.plugins, tooltip:{ ...chartDefaults.plugins.tooltip, callbacks:{ label: i=>`${i.dataset.label}: ${i.raw}만원` } } },
+      scales:{ x:{...chartDefaults.scales.x,stacked:true}, y:{...chartDefaults.scales.y,stacked:true,ticks:{...chartDefaults.scales.y.ticks,callback:v=>v+'만'}} }
+    }
+  });
+
+  // Goal ring
+  const goalWan = db.settings.goal||4000;
+  const doneWan = wan(total)||0;
+  const remain = Math.max(0, goalWan - doneWan);
+  const months_left = 12 - entries.length;
+  document.getElementById('goalRingWrap').innerHTML = `
+    <div class="goal-ring-wrap">
+      <canvas class="goal-ring-canvas" id="goalRingCanvas" width="120" height="120"></canvas>
+      <div class="goal-ring-info">
+        <div class="goal-ring-pct">${pct}%</div>
+        <div class="goal-ring-label">연간 목표 달성률</div>
+        <div class="goal-ring-detail">
+          <div class="goal-detail-row"><span class="k">달성</span><span class="v">${doneWan.toLocaleString()}만원</span></div>
+          <div class="goal-detail-row"><span class="k">잔여</span><span class="v">${remain.toLocaleString()}만원</span></div>
+          <div class="goal-detail-row"><span class="k">월평균 필요</span><span class="v">${months_left>0?Math.ceil(remain/months_left).toLocaleString():'-'}만원</span></div>
+        </div>
+      </div>
+    </div>
+  `;
+  // Draw ring canvas
+  setTimeout(() => {
+    const c = document.getElementById('goalRingCanvas');
+    if(!c) return;
+    const ctx2 = c.getContext('2d');
+    const cx=60,cy=60,r=50,lw=12;
+    ctx2.clearRect(0,0,120,120);
+    ctx2.beginPath(); ctx2.arc(cx,cy,r,-Math.PI/2,Math.PI*2*1.5); ctx2.strokeStyle='#1c2128'; ctx2.lineWidth=lw; ctx2.stroke();
+    ctx2.beginPath(); ctx2.arc(cx,cy,r,-Math.PI/2,-Math.PI/2+Math.PI*2*(pct/100)); ctx2.strokeStyle='#f0a500'; ctx2.lineWidth=lw; ctx2.lineCap='round'; ctx2.stroke();
+  },50);
+
+  // Cumulative chart
+  let cum=0;
+  const cumData = entries.map(e => { cum += wan(totalIncome(e))||0; return cum; });
+  makeChart('cumChart', {
+    type:'line',
+    data:{ labels, datasets:[
+      { label:'누적수입', data:cumData, borderColor:'#f0a500', backgroundColor:'rgba(240,165,0,0.08)', fill:true, tension:0.4, pointBackgroundColor:'#f0a500', pointRadius:5 },
+      { label:'목표선', data:Array(12).fill(null).map((_,i)=> Math.round(goalWan*(i+1)/12)).slice(0,entries.length), borderColor:'rgba(88,166,255,0.4)', borderDash:[4,4], pointRadius:0, tension:0 }
+    ]},
+    options:{ ...chartDefaults, plugins:{...chartDefaults.plugins,tooltip:{...chartDefaults.plugins.tooltip,callbacks:{label:i=>`${i.dataset.label}: ${i.raw}만원`}}}, scales:{x:{...chartDefaults.scales.x},y:{...chartDefaults.scales.y,ticks:{...chartDefaults.scales.y.ticks,callback:v=>v+'만'}}} }
+  });
+
+  // Pie
+  makeChart('pieChart', {
+    type:'doughnut',
+    data:{ labels:['전기료수입','REC수입'], datasets:[{ data:[wan(totalElec),wan(totalRec)], backgroundColor:['rgba(240,165,0,0.85)','rgba(63,185,80,0.85)'], borderWidth:0, hoverOffset:6 }] },
+    options:{ responsive:true, maintainAspectRatio:false, cutout:'65%', plugins:{ legend:{ display:true, position:'bottom', labels:{ color:'#8b949e', font:{size:11}, padding:16 } }, tooltip:{ callbacks:{ label:i=>`${i.label}: ${i.raw}만원` } } } }
+  });
+
+  // Insights
+  renderInsights(entries, total);
+
+  // Table
+  let tableHtml = `<thead><tr>
+    <th>월</th><th>전기료수입</th><th>REC수입</th><th>합계</th><th>생산량</th><th>SMP단가</th><th>REC수량</th><th>상태</th>
+  </tr></thead><tbody>`;
+  let totE=0,totR=0,totT=0;
+  entries.forEach(e => {
+    const t = totalIncome(e);
+    totE += e.elec||0; totR += e.recRev||0; totT += t;
+    const recStatus = e.recRev > 0 ? '<span class="badge ok">판매완료</span>' : (e.recQty ? '<span class="badge pending">미판매</span>' : '<span class="badge empty">-</span>');
+    tableHtml += `<tr>
+      <td>${e.year}년 ${e.month}월</td>
+      <td>${numFmt(wan(e.elec))}만</td>
+      <td>${e.recRev ? numFmt(wan(e.recRev))+'만' : '<span style="color:var(--text3)">-</span>'}</td>
+      <td style="color:var(--solar)">${numFmt(wan(t))}만</td>
+      <td>${e.prod ? e.prod.toLocaleString()+' kWh' : '-'}</td>
+      <td>${e.smp ? e.smp+' 원' : '-'}</td>
+      <td>${e.recQty || '-'}</td>
+      <td>${recStatus}</td>
+    </tr>`;
+  });
+  tableHtml += `</tbody><tfoot><tr class="total-row"><td>합계</td><td>${wanFmt(wan(totE))}</td><td>${wanFmt(wan(totR))}</td><td>${wanFmt(wan(totT))}</td><td colspan="4"></td></tr></tfoot>`;
+  document.getElementById('summaryTable').innerHTML = tableHtml;
+}
+
+function renderInsights(entries, total) {
+  const insights = [];
+  const goal = (db.settings.goal||4000)*10000;
+  const pct = total/goal*100;
+  const months_passed = entries.length;
+
+  // SMP trend
+  const smpEntries = entries.filter(e => e.smp);
+  if(smpEntries.length >= 2) {
+    const last = smpEntries[smpEntries.length-1];
+    const prev = smpEntries[smpEntries.length-2];
+    const d = ((last.smp-prev.smp)/prev.smp*100).toFixed(1);
+    insights.push({ type: parseFloat(d)>=0?'green':'red', title:'SMP 단가 추세', body:`${prev.month}월 ${prev.smp}원 → ${last.month}월 <strong>${last.smp}원</strong> (${parseFloat(d)>=0?'+':''}${d}%)` });
+  }
+
+  // REC pending
+  const pendingRec = entries.filter(e => e.recQty && !e.recRev);
+  if(pendingRec.length > 0) {
+    insights.push({ type:'yellow', title:'REC 미판매 주의', body:`${pendingRec.map(e=>e.month+'월').join(', ')} REC 수익 미확정. 단가 추이 확인 후 판매 시점 결정 권장.` });
+  }
+
+  // Pace
+  const avgPerMonth = total/months_passed;
+  const projectedTotal = avgPerMonth*12;
+  const projPct = (projectedTotal/goal*100).toFixed(0);
+  insights.push({ type: projectedTotal>=goal?'green':'blue', title:'연간 페이스 분석', body:`현재 월평균 <strong>${wanFmt(wan(avgPerMonth))}</strong>. 이 속도면 연간 <strong>${wanFmt(wan(projectedTotal))}</strong> 예상 (목표 ${projPct}%)` });
+
+  // Production growth
+  const prodEntries = entries.filter(e => e.prod);
+  if(prodEntries.length >= 2) {
+    const lp = prodEntries[prodEntries.length-1];
+    const pp = prodEntries[prodEntries.length-2];
+    const pd = ((lp.prod-pp.prod)/pp.prod*100).toFixed(1);
+    insights.push({ type:'blue', title:'생산량 변화', body:`${pp.month}월 ${pp.prod.toLocaleString()}kWh → ${lp.month}월 <strong>${lp.prod.toLocaleString()}kWh</strong> (${parseFloat(pd)>=0?'+':''}${pd}%)` });
+  }
+
+  // Best month
+  const best = [...entries].sort((a,b) => totalIncome(b)-totalIncome(a))[0];
+  if(best) insights.push({ type:'yellow', title:'최고 수익 월', body:`<strong>${best.month}월</strong>이 ${wanFmt(wan(totalIncome(best)))}으로 최고 성과. 해당월 SMP ${best.smp||'-'}원` });
+
+  // Remaining
+  const remain = Math.max(0, goal-total);
+  const monthsLeft = 12-months_passed;
+  if(monthsLeft > 0) insights.push({ type:'blue', title:'남은 목표 달성 계획', body:`잔여 <strong>${wanFmt(wan(remain))}</strong>을 ${monthsLeft}개월에 달성하려면 월 <strong>${wanFmt(wan(remain/monthsLeft))}</strong> 필요.` });
+
+  document.getElementById('insightGrid').style.gridTemplateColumns = `repeat(${Math.min(3,insights.length)}, 1fr)`;
+  document.getElementById('insightGrid').innerHTML = insights.map(i =>
+    `<div class="insight ${i.type}"><div class="insight-title">${i.title}</div><div class="insight-body">${i.body}</div></div>`
+  ).join('');
+}
+
+// ======= INPUT PAGE =======
+function renderInput() {
+  const yearSel = document.getElementById('inputYear');
+  const monSel = document.getElementById('inputMonth');
+  if(!yearSel.options.length) {
+    [2024,2025,2026,2027].forEach(y => yearSel.add(new Option(y,y)));
+    yearSel.value = 2026;
+    months.forEach((m,i) => monSel.add(new Option(m, i+1)));
+    monSel.value = new Date().getMonth()+1;
+  }
+  renderMonthList();
+}
+
+function renderMonthList() {
+  const entries = getEntries();
+  document.getElementById('monthList').innerHTML = entries.length ? entries.map(e => {
+    const t = totalIncome(e);
+    return `<div class="month-entry" onclick="selectMonth(${e.year},${e.month})">
+      <div class="month-entry-label">${e.year}/${e.month}월</div>
+      <div class="month-entry-info">
+        <span><div>수입합계</div><div class="val">${wanFmt(wan(t))}</div></span>
+        <span><div>전기료</div><div class="val">${wanFmt(wan(e.elec))}</div></span>
+        <span><div>REC</div><div class="val">${e.recRev ? wanFmt(wan(e.recRev)) : '미확정'}</div></span>
+      </div>
+    </div>`;
+  }).join('') : '<div style="color:var(--text3);font-size:13px;padding:12px 0;">입력된 데이터가 없습니다.</div>';
+}
+
+function selectMonth(y,m) {
+  document.getElementById('inputYear').value = y;
+  document.getElementById('inputMonth').value = m;
+  loadMonthData();
+}
+
+function loadMonthData() {
+  const y = +document.getElementById('inputYear').value;
+  const m = +document.getElementById('inputMonth').value;
+  const e = getEntry(y,m);
+  if(e) {
+    document.getElementById('fProd').value = e.prod||'';
+    document.getElementById('fSmp').value = e.smp||'';
+    document.getElementById('fElec').value = e.elec||'';
+    document.getElementById('fRecQty').value = e.recQty||'';
+    document.getElementById('fRecPrice').value = e.recPrice||'';
+    document.getElementById('fRecRev').value = e.recRev||'';
+    document.getElementById('fMktSmp').value = e.mktSmp||'';
+    document.getElementById('fSun').value = e.sun||'';
+    document.getElementById('fNote').value = e.note||'';
+    showToast(`${y}년 ${m}월 데이터 불러옴`, 'success');
+  } else {
+    clearForm();
+  }
+}
+
+function autoCalc() {
+  const prod = +document.getElementById('fProd').value;
+  const smp  = +document.getElementById('fSmp').value;
+  if(prod && smp && !document.getElementById('fElec').value) {
+    document.getElementById('fElec').value = Math.round(prod*smp);
+  }
+}
+
+function autoCalcRec() {
+  const qty = +document.getElementById('fRecQty').value;
+  const price = +document.getElementById('fRecPrice').value;
+  if(qty && price && !document.getElementById('fRecRev').value) {
+    document.getElementById('fRecRev').value = qty*price;
+  }
+}
+
+function saveMonth() {
+  const y = +document.getElementById('inputYear').value;
+  const m = +document.getElementById('inputMonth').value;
+  const prod = document.getElementById('fProd').value;
+  const smp  = document.getElementById('fSmp').value;
+  let elec   = +document.getElementById('fElec').value || 0;
+  if(!elec && prod && smp) elec = Math.round(+prod * +smp);
+  const recQty   = document.getElementById('fRecQty').value;
+  const recPrice = document.getElementById('fRecPrice').value;
+  let recRev     = +document.getElementById('fRecRev').value || 0;
+  if(!recRev && recQty && recPrice) recRev = +recQty * +recPrice;
+
+  db.entries[`${y}-${m}`] = {
+    year:y, month:m,
+    prod: prod ? +prod : null,
+    smp: smp ? +smp : null,
+    elec: elec||null,
+    recQty: recQty ? +recQty : null,
+    recPrice: recPrice ? +recPrice : null,
+    recRev: recRev||0,
+    mktSmp: document.getElementById('fMktSmp').value ? +document.getElementById('fMktSmp').value : null,
+    sun: document.getElementById('fSun').value ? +document.getElementById('fSun').value : null,
+    note: document.getElementById('fNote').value
+  };
+  save();
+  renderMonthList();
+  showToast(`${y}년 ${m}월 저장 완료!`, 'success');
+}
+
+function deleteMonth() {
+  const y = +document.getElementById('inputYear').value;
+  const m = +document.getElementById('inputMonth').value;
+  if(!db.entries[`${y}-${m}`]) { showToast('삭제할 데이터가 없습니다.', 'error'); return; }
+  if(!confirm(`${y}년 ${m}월 데이터를 삭제하시겠습니까?`)) return;
+  delete db.entries[`${y}-${m}`];
+  save(); clearForm(); renderMonthList();
+  showToast(`${y}년 ${m}월 삭제됨`, 'success');
+}
+
+function clearForm() {
+  ['fProd','fSmp','fElec','fRecQty','fRecPrice','fRecRev','fMktSmp','fSun','fNote'].forEach(id => document.getElementById(id).value='');
+}
+
+function exportData() {
+  const blob = new Blob([JSON.stringify(db, null, 2)], {type:'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `solar_data_${Date.now()}.json`; a.click();
+}
+function importData(input) {
+  const file = input.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try { db = JSON.parse(e.target.result); save(); renderMonthList(); showToast('데이터 가져오기 완료!','success'); } catch { showToast('파일 형식 오류','error'); }
+  };
+  reader.readAsText(file);
+}
+
+// ======= SMP PAGE =======
+function renderSmp() {
+  const entries = getEntries();
+  const smpEntries = entries.filter(e => e.smp);
+  const labels = smpEntries.map(e => `${e.month}월`);
+
+  makeChart('smpLineChart', {
+    type:'line',
+    data:{ labels, datasets:[
+      { label:'우리 SMP', data: smpEntries.map(e=>e.smp), borderColor:'#f0a500', backgroundColor:'rgba(240,165,0,0.08)', fill:true, tension:0.4, pointBackgroundColor:'#f0a500', pointRadius:6 },
+      { label:'시장평균', data: smpEntries.map(e=>e.mktSmp||null), borderColor:'rgba(88,166,255,0.7)', borderDash:[4,4], tension:0.4, pointBackgroundColor:'#58a6ff', pointRadius:4, spanGaps:false }
+    ]},
+    options:{ ...chartDefaults, scales:{ x:{...chartDefaults.scales.x}, y:{...chartDefaults.scales.y, ticks:{...chartDefaults.scales.y.ticks, callback:v=>v+'원'}} },
+      plugins:{...chartDefaults.plugins,tooltip:{...chartDefaults.plugins.tooltip,callbacks:{label:i=>`${i.dataset.label}: ${i.raw}원/kWh`}}} }
+  });
+
+  makeChart('smpRevenueChart', {
+    type:'bar',
+    data:{ labels: entries.map(e=>`${e.month}월`), datasets:[
+      { label:'전기료수입', data: entries.map(e=>wan(e.elec)), backgroundColor:'rgba(240,165,0,0.7)', borderRadius:4 }
+    ]},
+    options:{ ...chartDefaults, scales:{x:{...chartDefaults.scales.x},y:{...chartDefaults.scales.y,ticks:{...chartDefaults.scales.y.ticks,callback:v=>v+'만'}}},
+      plugins:{...chartDefaults.plugins,tooltip:{...chartDefaults.plugins.tooltip,callbacks:{label:i=>`${i.raw}만원`}}} }
+  });
+
+  makeChart('prodChart', {
+    type:'bar',
+    data:{ labels: entries.map(e=>`${e.month}월`), datasets:[
+      { label:'생산량', data: entries.map(e=>e.prod), backgroundColor:'rgba(88,166,255,0.6)', borderRadius:4 }
+    ]},
+    options:{ ...chartDefaults, scales:{x:{...chartDefaults.scales.x},y:{...chartDefaults.scales.y,ticks:{...chartDefaults.scales.y.ticks,callback:v=>v?v.toLocaleString():''}}},
+      plugins:{...chartDefaults.plugins,tooltip:{...chartDefaults.plugins.tooltip,callbacks:{label:i=>`${i.raw?.toLocaleString()} kWh`}}} }
+  });
+
+  // SMP compare
+  const compareItems = smpEntries.filter(e => e.mktSmp);
+  document.getElementById('smpCompareRow').innerHTML = compareItems.length ? compareItems.map(e => {
+    const diff = (e.smp - e.mktSmp).toFixed(2);
+    const isUp = parseFloat(diff) >= 0;
+    return `<div class="smp-compare-item">
+      <div class="smp-compare-month">${e.year}년 ${e.month}월</div>
+      <div class="smp-compare-mine">${e.smp} 원/kWh</div>
+      <div class="smp-compare-market">시장평균: ${e.mktSmp} 원/kWh</div>
+      <div class="smp-compare-diff ${isUp?'up':'dn'}">${isUp?'▲ 시장보다 ':'▼ 시장보다 '}${Math.abs(diff)}원 ${isUp?'높음':'낮음'}</div>
+    </div>`;
+  }).join('') : '<div style="color:var(--text3);font-size:13px;padding:8px 0;">데이터 입력 시 시장 평균 SMP를 함께 입력하면 비교 분석이 가능합니다.</div>';
+}
+
+// ======= REC PAGE =======
+function renderRec() {
+  const entries = getEntries();
+
+  // REC insights
+  const recEntries = entries.filter(e => e.recQty||e.recRev);
+  const totalRecRev = entries.reduce((s,e)=>s+(e.recRev||0),0);
+  const totalRecQty = entries.reduce((s,e)=>s+(e.recQty||0),0);
+  const avgRecPrice = recEntries.filter(e=>e.recPrice).reduce((s,e)=>s+e.recPrice,0)/recEntries.filter(e=>e.recPrice).length||0;
+  const pendingRec = entries.filter(e => e.recQty && !e.recRev);
+
+  document.getElementById('recInsightGrid').innerHTML = `
+    <div class="insight green"><div class="insight-title">총 REC 수입</div><div class="insight-body"><strong>${wanFmt(wan(totalRecRev))}</strong></div></div>
+    <div class="insight blue"><div class="insight-title">총 REC 거래량</div><div class="insight-body"><strong>${totalRecQty}개</strong> / 평균단가 ${avgRecPrice ? Math.round(avgRecPrice).toLocaleString()+'원' : '-'}</div></div>
+    <div class="insight ${pendingRec.length?'yellow':'green'}"><div class="insight-title">미판매 현황</div><div class="insight-body">${pendingRec.length ? `<strong>${pendingRec.map(e=>e.month+'월').join(', ')}</strong> REC 판매 대기` : '모든 REC 판매 완료'}</div></div>
+  `;
+
+  const recLabels = entries.filter(e=>e.recQty).map(e=>`${e.month}월`);
+  const recQtyData = entries.filter(e=>e.recQty).map(e=>e.recQty);
+  const recPriceData = entries.filter(e=>e.recQty).map(e=>e.recPrice ? e.recPrice/100 : null);
+
+  makeChart('recChart', {
+    type:'bar',
+    data:{ labels:recLabels, datasets:[
+      { label:'REC수량', data:recQtyData, backgroundColor:'rgba(63,185,80,0.7)', borderRadius:4, yAxisID:'y' },
+      { label:'단가(÷100)', data:recPriceData, backgroundColor:'rgba(210,153,34,0.5)', borderRadius:4, yAxisID:'y2' }
+    ]},
+    options:{ ...chartDefaults,
+      scales:{
+        x:{...chartDefaults.scales.x},
+        y:{...chartDefaults.scales.y,position:'left',ticks:{...chartDefaults.scales.y.ticks,callback:v=>v+'개'}},
+        y2:{...chartDefaults.scales.y,position:'right',ticks:{...chartDefaults.scales.y.ticks,callback:v=>v+'백원'},grid:{display:false}}
+      },
+      plugins:{...chartDefaults.plugins,tooltip:{...chartDefaults.plugins.tooltip,callbacks:{label:i=>i.datasetIndex===0?`REC: ${i.raw}개`:`단가: ${(i.raw*100).toLocaleString()}원`}}}
+    }
+  });
+
+  makeChart('recRevChart', {
+    type:'bar',
+    data:{ labels: entries.map(e=>`${e.month}월`), datasets:[
+      { label:'REC수입', data: entries.map(e=>wan(e.recRev)), backgroundColor: entries.map(e=>e.recRev?'rgba(63,185,80,0.7)':'rgba(139,148,158,0.2)'), borderRadius:4 }
+    ]},
+    options:{ ...chartDefaults, scales:{x:{...chartDefaults.scales.x},y:{...chartDefaults.scales.y,ticks:{...chartDefaults.scales.y.ticks,callback:v=>v+'만'}}},
+      plugins:{...chartDefaults.plugins,tooltip:{...chartDefaults.plugins.tooltip,callbacks:{label:i=>`${i.raw||0}만원`}}} }
+  });
+
+  // REC optimize
+  const recWithPrice = recEntries.filter(e=>e.recPrice).sort((a,b)=>b.recPrice-a.recPrice);
+  document.getElementById('recOptimizeContent').innerHTML = recWithPrice.length ?
+    `<div class="rec-opt-grid">${recWithPrice.map(e=>`
+      <div class="rec-opt">
+        <div class="rec-opt-month">${e.year}년 ${e.month}월</div>
+        <div class="rec-opt-val">${e.recPrice.toLocaleString()}원/REC</div>
+        <div class="rec-opt-rec">${e.recQty}개 → ${wanFmt(wan(e.recRev))}</div>
+        ${e.recRev ? '<div style="font-size:10px;color:var(--rec);margin-top:3px;">✓ 판매완료</div>' : '<div style="font-size:10px;color:var(--warn);margin-top:3px;">⏳ 미판매</div>'}
+      </div>`).join('')}</div>
+      <div style="font-size:12px;color:var(--text3);margin-top:12px;">💡 REC 단가가 높은 달에 미판매 REC를 집중 판매하면 수익 최대화가 가능합니다. 시장 단가 추이를 지속 모니터링하세요.</div>` :
+    '<div style="color:var(--text3);font-size:13px;">REC 단가 데이터를 입력하면 최적 판매 타이밍 분석이 가능합니다.</div>';
+
+  // Pending
+  document.getElementById('recPendingContent').innerHTML = pendingRec.length ?
+    `<table class="data-table"><thead><tr><th>월</th><th>REC 수량</th><th>예상 단가</th><th>예상 수익</th><th>상태</th></tr></thead><tbody>
+    ${pendingRec.map(e=>`<tr>
+      <td>${e.year}년 ${e.month}월</td>
+      <td>${e.recQty}개</td>
+      <td>${e.recPrice ? e.recPrice.toLocaleString()+'원' : '미입력'}</td>
+      <td>${e.recPrice ? wanFmt(wan(e.recQty*e.recPrice)) : '-'}</td>
+      <td><span class="badge pending">판매 대기</span></td>
+    </tr>`).join('')}
+    </tbody></table>` :
+    '<div style="color:var(--text3);font-size:13px;padding:8px 0;">미판매 REC 없음</div>';
+}
+
+// ======= FORECAST PAGE =======
+function renderForecast() {
+  const entries = getEntries();
+  const goal = (db.settings.goal||4000)*10000;
+  const total = entries.reduce((s,e)=>s+totalIncome(e),0);
+  const remain = Math.max(0, goal-total);
+  const months_passed = entries.length;
+  const months_left = 12 - months_passed;
+  const avgPerMonth = months_passed ? total/months_passed : 0;
+  const projected = avgPerMonth * 12;
+
+  // KPI
+  document.getElementById('forecastKpi').innerHTML = `
+    <div class="kpi-card"><div class="kpi-label">연간 예상 수입</div><div class="kpi-value" style="color:${projected>=goal?'var(--rec)':'var(--warn)'}">${wanFmt(wan(projected))}</div><div class="kpi-sub">현재 페이스 기준</div></div>
+    <div class="kpi-card"><div class="kpi-label">잔여 달성 필요</div><div class="kpi-value">${wanFmt(wan(remain))}</div><div class="kpi-sub">${months_left}개월 남음</div></div>
+    <div class="kpi-card"><div class="kpi-label">월 필요 수익</div><div class="kpi-value">${months_left>0?wanFmt(wan(remain/months_left)):'-'}</div><div class="kpi-sub">목표 달성을 위한 월평균</div></div>
+    <div class="kpi-card"><div class="kpi-label">목표 달성 가능성</div><div class="kpi-value" style="color:${projected>=goal?'var(--rec)':'var(--warn)'}">${projected>=goal?'✓ 달성 가능':'⚠ 점검 필요'}</div><div class="kpi-sub">${Math.round(projected/goal*100)}% 예상</div></div>
+  `;
+
+  // Forecast chart: actual + projected
+  const allMonthLabels = months.slice(0,12);
+  const actualData = Array(12).fill(null);
+  entries.forEach(e => { actualData[e.month-1] = wan(totalIncome(e)); });
+
+  // Projected: use seasonal index + avg
+  const avgSmpEntries = entries.filter(e=>e.smp);
+  const avgSmp = avgSmpEntries.length ? avgSmpEntries.reduce((s,e)=>s+e.smp,0)/avgSmpEntries.length : 110;
+  const avgProd = entries.filter(e=>e.prod).reduce((s,e,_,a)=>s+e.prod/a.length,0) || 13000;
+  const avgRecPerMonth = entries.reduce((s,e)=>s+(e.recRev||0),0)/(months_passed||1);
+  const projData = Array(12).fill(null);
+  for(let i=months_passed;i<12;i++) {
+    const est = Math.round((avgProd * seasonIdx[i] * avgSmp + avgRecPerMonth) / 10000);
+    projData[i] = est;
+  }
+  const goalLine = Array(12).fill(null).map((_,i)=>Math.round(goal/12/10000));
+
+  makeChart('forecastChart', {
+    type:'bar',
+    data:{ labels:allMonthLabels, datasets:[
+      { label:'실적', data:actualData, backgroundColor:'rgba(240,165,0,0.75)', borderRadius:4 },
+      { label:'예측', data:projData, backgroundColor:'rgba(240,165,0,0.25)', borderRadius:4, borderColor:'rgba(240,165,0,0.4)', borderWidth:1 },
+      { type:'line', label:'월목표', data:goalLine, borderColor:'rgba(88,166,255,0.5)', borderDash:[4,4], pointRadius:0, tension:0 }
+    ]},
+    options:{ ...chartDefaults, scales:{x:{...chartDefaults.scales.x},y:{...chartDefaults.scales.y,ticks:{...chartDefaults.scales.y.ticks,callback:v=>v+'만'}}},
+      plugins:{...chartDefaults.plugins,tooltip:{...chartDefaults.plugins.tooltip,callbacks:{label:i=>`${i.dataset.label}: ${i.raw}만원`}}} }
+  });
+
+  // Monthly forecast list
+  let listHtml = '';
+  for(let i=0;i<12;i++) {
+    const isActual = i < months_passed;
+    const val = isActual ? actualData[i] : projData[i];
+    const pct = val ? Math.round(val/(goal/12/10000)*100) : 0;
+    listHtml += `<div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border)">
+      <span style="font-size:12px;min-width:28px;color:${isActual?'var(--text2)':'var(--text3)'}">${i+1}월</span>
+      <div style="flex:1">
+        <div class="progress-wrap" style="height:6px">
+          <div class="progress-bar" style="width:${Math.min(100,pct)}%;background:${isActual?'var(--solar)':'rgba(240,165,0,0.35)'}"></div>
+        </div>
+      </div>
+      <span style="font-family:var(--mono);font-size:12px;min-width:50px;text-align:right;color:${isActual?'var(--solar)':'var(--text3)'}">${val?val+'만':'-'}</span>
+      <span style="font-size:10px;color:var(--text3);min-width:30px">${isActual?'실적':'예측'}</span>
+    </div>`;
+  }
+  document.getElementById('forecastMonthList').innerHTML = listHtml;
+
+  // Scenarios
+  const goalWan = db.settings.goal||4000;
+  const doneWan = wan(total)||0;
+  const remainWan = Math.max(0, goalWan-doneWan);
+  const scenarios = [
+    { label:'현재 페이스 유지', desc:'월평균 '+wanFmt(wan(avgPerMonth)), proj: Math.round(projected/10000), color: projected>=goal?'var(--rec)':'var(--warn)' },
+    { label:'SMP 10% 상승 시', desc:'단가 상승 + 계절 효과', proj: Math.round(projected*1.1/10000), color:'var(--rec)' },
+    { label:'REC 추가 판매', desc:'미판매 REC 집중 처리', proj: Math.round((projected + entries.filter(e=>e.recQty&&!e.recRev).reduce((s,e)=>s+(e.recQty||0)*(e.recPrice||70600),0))/10000), color:'var(--accent)' },
+  ];
+  document.getElementById('scenarioGrid').innerHTML = scenarios.map(s => `
+    <div class="card">
+      <div class="card-title">${s.label}</div>
+      <div style="font-size:22px;font-family:var(--mono);color:${s.color};margin:8px 0">${s.proj.toLocaleString()}만원</div>
+      <div style="font-size:11px;color:var(--text3)">${s.desc}</div>
+      <div style="font-size:11px;margin-top:8px;color:${s.proj>=goalWan?'var(--rec)':'var(--warn)'}">${s.proj>=goalWan?'✓ 목표달성':'목표 대비 '+(goalWan-s.proj).toLocaleString()+'만 부족'}</div>
+    </div>`).join('');
+
+  // Settings
+  document.getElementById('fGoal').value = db.settings.goal||4000;
+  document.getElementById('fCapacity').value = db.settings.capacity||100;
+}
+
+function saveSettings() {
+  db.settings.goal = +document.getElementById('fGoal').value || 4000;
+  db.settings.capacity = +document.getElementById('fCapacity').value || 100;
+  save();
+  document.getElementById('goalBadge').textContent = `연간목표: ${db.settings.goal.toLocaleString()}만원`;
+  renderForecast();
+  showToast('목표 설정 저장됨', 'success');
+}
+
+// ======= TOAST =======
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = `toast ${type} show`;
+  setTimeout(() => t.className='toast', 2800);
+}
+
+// ======= INIT =======
+load();
+renderDashboard();
+document.getElementById('goalBadge').textContent = `연간목표: ${(db.settings.goal||4000).toLocaleString()}만원`;
+</script>
+</body>
+</html>
