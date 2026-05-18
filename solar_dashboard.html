@@ -8,298 +8,387 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0d1117;
-  --bg2: #161b22;
-  --bg3: #1c2128;
-  --border: #30363d;
-  --text: #e6edf3;
-  --text2: #8b949e;
-  --text3: #6e7681;
-  --solar: #f0a500;
-  --solar2: #ffc947;
-  --rec: #3fb950;
-  --rec2: #56d364;
-  --accent: #58a6ff;
-  --danger: #f85149;
-  --warn: #d29922;
+  --bg:      #f4f6fb;
+  --bg2:     #ffffff;
+  --bg3:     #f0f2f8;
+  --border:  #e2e6f0;
+  --border2: #c8cfe8;
+  --text:    #1a1d2e;
+  --text2:   #4a5078;
+  --text3:   #8b93b8;
+  --solar:   #e8920a;
+  --solar2:  #f5a623;
+  --solarL:  #fff8ed;
+  --rec:     #169a46;
+  --recL:    #edfaf3;
+  --accent:  #2f6ef5;
+  --accentL: #eef3ff;
+  --danger:  #d63031;
+  --dangerL: #fff0f0;
+  --warn:    #bf7a18;
+  --warnL:   #fff8e6;
+  --shadow:  0 1px 4px rgba(30,40,90,.07), 0 4px 18px rgba(30,40,90,.06);
+  --radius:  10px;
   --mono: 'DM Mono', monospace;
   --sans: 'Noto Sans KR', sans-serif;
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; font-size: 14px; line-height: 1.5; }
 
-/* NAV */
-nav { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; gap: 0; height: 52px; position: sticky; top: 0; z-index: 100; }
-.nav-logo { font-family: var(--mono); font-size: 14px; color: var(--solar); letter-spacing: -0.02em; margin-right: 32px; display: flex; align-items: center; gap: 8px; }
-.nav-logo::before { content: '☀'; font-size: 18px; }
-.nav-tabs { display: flex; gap: 0; height: 100%; }
-.nav-tab { padding: 0 16px; height: 100%; display: flex; align-items: center; font-size: 13px; color: var(--text2); cursor: pointer; border-bottom: 2px solid transparent; transition: all .2s; white-space: nowrap; }
-.nav-tab:hover { color: var(--text); }
-.nav-tab.active { color: var(--text); border-bottom-color: var(--solar); }
-.nav-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
-.goal-badge { font-family: var(--mono); font-size: 11px; color: var(--text3); background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; padding: 4px 12px; }
+/* ── NAV ── */
+nav {
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+  padding: 0 28px;
+  display: flex; align-items: center;
+  height: 54px;
+  position: sticky; top: 0; z-index: 200;
+  box-shadow: 0 1px 6px rgba(30,40,90,.07);
+}
+.nav-logo {
+  font-family: var(--mono); font-size: 14px; font-weight: 500;
+  color: var(--solar); letter-spacing: -.02em;
+  margin-right: 24px; display: flex; align-items: center; gap: 7px;
+  white-space: nowrap; flex-shrink: 0;
+}
+.nav-plant-wrap {
+  display: flex; align-items: center; gap: 7px;
+  margin-right: 20px; padding-right: 20px;
+  border-right: 1px solid var(--border);
+}
+.nav-plant-wrap label { font-size: 11px; color: var(--text3); white-space: nowrap; }
+.nav-plant-sel {
+  background: var(--bg3); border: 1px solid var(--border2);
+  border-radius: 6px; padding: 5px 10px;
+  color: var(--text); font-size: 12px; outline: none; cursor: pointer;
+  max-width: 140px;
+}
+.nav-tabs { display: flex; height: 54px; overflow-x: auto; }
+.nav-tabs::-webkit-scrollbar { display: none; }
+.nav-tab {
+  padding: 0 15px; height: 100%; display: flex; align-items: center;
+  font-size: 13px; color: var(--text2); cursor: pointer;
+  border-bottom: 2px solid transparent; transition: all .18s;
+  white-space: nowrap; flex-shrink: 0;
+}
+.nav-tab:hover { color: var(--text); background: var(--bg3); }
+.nav-tab.active { color: var(--solar); border-bottom-color: var(--solar); font-weight: 600; }
+.nav-right { margin-left: auto; padding-left: 12px; flex-shrink: 0; }
+.goal-badge {
+  font-size: 11px; color: var(--warn);
+  background: var(--warnL); border: 1px solid #f0d09a;
+  border-radius: 20px; padding: 4px 13px; white-space: nowrap;
+  font-family: var(--mono);
+}
 
-/* LAYOUT */
-.page { display: none; padding: 24px; max-width: 1200px; margin: 0 auto; }
+/* ── PAGE ── */
+.page { display: none; padding: 22px 28px 40px; max-width: 1240px; margin: 0 auto; }
 .page.active { display: block; }
 
-/* CARDS */
-.card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 20px; }
-.card-title { font-size: 11px; font-weight: 500; color: var(--text3); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 16px; }
+/* ── CARD ── */
+.card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 22px; box-shadow: var(--shadow); }
+.card-title { font-size: 10px; font-weight: 700; color: var(--text3); letter-spacing: .09em; text-transform: uppercase; margin-bottom: 16px; }
 
-/* KPI GRID */
-.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
-.kpi-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; }
-.kpi-label { font-size: 11px; color: var(--text3); letter-spacing: 0.06em; margin-bottom: 8px; }
-.kpi-value { font-family: var(--mono); font-size: 22px; font-weight: 500; line-height: 1; }
+/* ── KPI ── */
+.kpi-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 18px; }
+.kpi-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; box-shadow: var(--shadow); }
+.kpi-label { font-size: 11px; color: var(--text3); letter-spacing: .05em; margin-bottom: 8px; }
+.kpi-value { font-family: var(--mono); font-size: 24px; font-weight: 500; line-height: 1; }
 .kpi-sub { font-size: 11px; color: var(--text3); margin-top: 6px; }
-.kpi-delta { font-size: 11px; margin-top: 4px; font-family: var(--mono); }
+.kpi-delta { font-size: 11px; margin-top: 5px; font-family: var(--mono); }
 .kpi-delta.up { color: var(--rec); }
-.kpi-delta.down { color: var(--danger); }
+.kpi-delta.dn { color: var(--danger); }
 
-/* PROGRESS BAR */
-.progress-wrap { background: var(--bg3); border-radius: 4px; height: 8px; overflow: hidden; margin-top: 10px; }
-.progress-bar { height: 100%; border-radius: 4px; transition: width .6s ease; }
+/* ── PROGRESS ── */
+.prog-wrap { background: var(--bg3); border-radius: 4px; height: 7px; overflow: hidden; margin-top: 10px; }
+.prog-bar  { height: 100%; border-radius: 4px; transition: width .6s ease; }
 
-/* GRID LAYOUTS */
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
-.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
-.grid-21 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px; }
-.chart-wrap { position: relative; height: 220px; }
-.chart-wrap.tall { height: 280px; }
+/* ── GRID HELPERS ── */
+.g2  { display: grid; grid-template-columns: 1fr 1fr;   gap: 16px; margin-bottom: 16px; }
+.g3  { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.g21 { display: grid; grid-template-columns: 2fr 1fr;   gap: 16px; margin-bottom: 16px; }
+.chart-box      { position: relative; height: 220px; }
+.chart-box.tall { height: 280px; }
 
-/* TABLE */
-.data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-.data-table th { font-size: 11px; color: var(--text3); font-weight: 500; letter-spacing: 0.05em; padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: right; }
-.data-table th:first-child { text-align: left; }
-.data-table td { padding: 12px 12px; border-bottom: 1px solid #1c2128; text-align: right; font-family: var(--mono); font-size: 12px; }
-.data-table td:first-child { text-align: left; font-family: var(--sans); font-size: 13px; }
-.data-table tr:hover td { background: var(--bg3); }
-.data-table .total-row td { border-top: 1px solid var(--border); color: var(--solar); font-weight: 500; }
+/* ── TABLE ── */
+.dtable { width: 100%; border-collapse: collapse; font-size: 13px; }
+.dtable th { font-size: 10px; color: var(--text3); font-weight: 700; letter-spacing: .06em; padding: 9px 12px; border-bottom: 2px solid var(--border); text-align: right; background: var(--bg3); }
+.dtable th:first-child { text-align: left; }
+.dtable td { padding: 11px 12px; border-bottom: 1px solid var(--border); text-align: right; font-family: var(--mono); font-size: 12px; color: var(--text2); }
+.dtable td:first-child { text-align: left; font-family: var(--sans); font-size: 13px; color: var(--text); }
+.dtable tr:hover td { background: var(--bg3); }
+.dtable tfoot td { border-top: 2px solid var(--border2); background: var(--solarL); color: var(--solar); font-weight: 700; }
 
-/* BADGE */
-.badge { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 20px; font-family: var(--mono); }
-.badge.ok { background: rgba(63,185,80,.15); color: var(--rec); }
-.badge.pending { background: rgba(210,153,34,.15); color: var(--warn); }
-.badge.empty { background: rgba(139,148,158,.1); color: var(--text3); }
+/* ── BADGE ── */
+.badge { display: inline-block; font-size: 10px; padding: 3px 9px; border-radius: 20px; font-family: var(--mono); font-weight: 600; }
+.badge.ok      { background: var(--recL);    color: var(--rec); }
+.badge.pending { background: var(--warnL);   color: var(--warn); }
+.badge.empty   { background: var(--bg3);     color: var(--text3); }
 
-/* INSIGHT CARDS */
-.insight-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
-.insight { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; border-left: 3px solid; }
-.insight.blue { border-left-color: var(--accent); }
-.insight.green { border-left-color: var(--rec); }
-.insight.yellow { border-left-color: var(--solar); }
-.insight.red { border-left-color: var(--danger); }
-.insight-title { font-size: 11px; color: var(--text3); margin-bottom: 6px; font-weight: 500; }
-.insight-body { font-size: 13px; line-height: 1.6; color: var(--text2); }
-.insight-body strong { color: var(--text); }
+/* ── INSIGHT ── */
+.ins-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 16px; }
+.ins { border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; border-left: 3px solid; box-shadow: var(--shadow); }
+.ins.blue   { background: var(--accentL); border-left-color: var(--accent); }
+.ins.green  { background: var(--recL);    border-left-color: var(--rec); }
+.ins.yellow { background: var(--solarL);  border-left-color: var(--solar); }
+.ins.red    { background: var(--dangerL); border-left-color: var(--danger); }
+.ins-title  { font-size: 10px; color: var(--text3); margin-bottom: 5px; font-weight: 700; letter-spacing: .04em; }
+.ins-body   { font-size: 13px; line-height: 1.6; color: var(--text2); }
+.ins-body strong { color: var(--text); }
 
-/* FORM */
-.form-section { margin-bottom: 32px; }
-.form-section-title { font-size: 13px; font-weight: 500; color: var(--text2); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
-.form-section-title::before { content: ''; display: block; width: 3px; height: 14px; background: var(--solar); border-radius: 2px; }
-.form-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-.form-group { display: flex; flex-direction: column; gap: 6px; }
-.form-label { font-size: 11px; color: var(--text3); letter-spacing: 0.04em; }
-.form-input { background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; color: var(--text); font-family: var(--mono); font-size: 13px; outline: none; transition: border-color .2s; }
-.form-input:focus { border-color: var(--solar); }
-.form-input::placeholder { color: var(--text3); }
-.form-select { background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; color: var(--text); font-size: 13px; outline: none; cursor: pointer; }
-.btn { padding: 10px 20px; border-radius: 6px; border: none; cursor: pointer; font-size: 13px; font-family: var(--sans); font-weight: 500; transition: all .2s; }
-.btn-primary { background: var(--solar); color: #000; }
-.btn-primary:hover { background: var(--solar2); }
-.btn-secondary { background: var(--bg3); color: var(--text2); border: 1px solid var(--border); }
-.btn-secondary:hover { color: var(--text); border-color: var(--text3); }
-.btn-danger { background: rgba(248,81,73,.15); color: var(--danger); border: 1px solid rgba(248,81,73,.3); }
-.btn-danger:hover { background: rgba(248,81,73,.25); }
-.btn-row { display: flex; gap: 10px; align-items: center; margin-top: 20px; }
+/* ── FORM ── */
+.fs      { margin-bottom: 26px; }
+.fs-title {
+  font-size: 12px; font-weight: 700; color: var(--text2);
+  margin-bottom: 13px; display: flex; align-items: center; gap: 8px;
+}
+.fs-title::before { content:''; display:block; width:3px; height:14px; background:var(--solar); border-radius:2px; }
+.fg { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+.fgroup { display: flex; flex-direction: column; gap: 5px; }
+.flabel { font-size: 11px; color: var(--text3); font-weight: 600; letter-spacing: .04em; }
+.flabel .tag { font-size: 10px; color: var(--solar); margin-left: 4px; }
+.finput {
+  background: var(--bg3); border: 1.5px solid var(--border2);
+  border-radius: 7px; padding: 10px 13px;
+  color: var(--text); font-family: var(--mono); font-size: 13px;
+  outline: none; transition: border-color .18s, box-shadow .18s, background .18s;
+  width: 100%;
+}
+.finput:focus { border-color: var(--solar); box-shadow: 0 0 0 3px rgba(232,146,10,.12); background: #fff; }
+.finput::placeholder { color: #bcc3dc; }
+.finput.auto { background: var(--solarL); border-color: #f0c070; color: var(--text); }
+.fsel {
+  background: var(--bg3); border: 1.5px solid var(--border2);
+  border-radius: 7px; padding: 10px 13px;
+  color: var(--text); font-size: 13px; outline: none; cursor: pointer; width: 100%;
+}
+.fsel:focus { border-color: var(--solar); }
+.fhint { font-size: 11px; color: var(--text3); margin-top: 6px; line-height: 1.5; }
 
-.toast { position: fixed; bottom: 24px; right: 24px; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; font-size: 13px; z-index: 1000; transform: translateY(60px); opacity: 0; transition: all .3s; box-shadow: 0 8px 24px rgba(0,0,0,.4); }
+/* ── BUTTONS ── */
+.btn { padding: 10px 20px; border-radius: 7px; border: none; cursor: pointer; font-size: 13px; font-family: var(--sans); font-weight: 500; transition: all .18s; }
+.btn-primary   { background: var(--solar);  color: #fff; }
+.btn-primary:hover   { background: #d08008; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(232,146,10,.28); }
+.btn-secondary { background: var(--bg3);  color: var(--text2); border: 1.5px solid var(--border2); }
+.btn-secondary:hover { border-color: var(--solar); color: var(--solar); }
+.btn-accent    { background: var(--accent); color: #fff; }
+.btn-accent:hover    { background: #1f5ae0; }
+.btn-danger    { background: var(--dangerL); color: var(--danger); border: 1px solid #f5b0ae; }
+.btn-danger:hover    { background: #ffdede; }
+.btn-sm { padding: 6px 13px; font-size: 12px; }
+.btn-row { display: flex; gap: 10px; align-items: center; margin-top: 18px; flex-wrap: wrap; }
+
+/* ── TOAST ── */
+.toast { position: fixed; bottom: 24px; right: 24px; background: var(--bg2); border: 1px solid var(--border); border-radius: 9px; padding: 13px 18px; font-size: 13px; z-index: 9999; transform: translateY(60px); opacity: 0; transition: all .3s; box-shadow: 0 8px 28px rgba(30,40,90,.15); }
 .toast.show { transform: translateY(0); opacity: 1; }
 .toast.success { border-left: 3px solid var(--rec); }
-.toast.error { border-left: 3px solid var(--danger); }
+.toast.error   { border-left: 3px solid var(--danger); }
 
-.month-entry-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
-.month-entry { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: border-color .2s; }
-.month-entry:hover { border-color: var(--solar); }
-.month-entry.active { border-color: var(--solar); background: rgba(240,165,0,.05); }
-.month-entry-label { font-weight: 500; font-size: 14px; min-width: 60px; }
-.month-entry-info { flex: 1; display: flex; gap: 20px; font-size: 12px; color: var(--text3); font-family: var(--mono); }
-.month-entry-info span { display: flex; flex-direction: column; gap: 2px; }
-.month-entry-info .val { color: var(--text2); }
+/* ── MONTH LIST ── */
+.mlist { display: flex; flex-direction: column; gap: 7px; margin-bottom: 16px; max-height: 440px; overflow-y: auto; }
+.mentry { background: var(--bg3); border: 1.5px solid var(--border); border-radius: 8px; padding: 11px 14px; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: all .18s; }
+.mentry:hover { border-color: var(--solar); background: var(--solarL); }
+.mentry-label { font-weight: 700; font-size: 13px; min-width: 54px; color: var(--text); }
+.mentry-info  { flex: 1; display: flex; gap: 14px; font-size: 11px; color: var(--text3); font-family: var(--mono); }
+.mentry-info span { display: flex; flex-direction: column; gap: 1px; }
+.mentry-info .val { color: var(--text2); font-size: 12px; }
 
-.rec-opt-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
-.rec-opt { background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 14px; cursor: pointer; transition: all .2s; }
-.rec-opt:hover { border-color: var(--rec); }
-.rec-opt-month { font-size: 12px; color: var(--text3); margin-bottom: 6px; }
-.rec-opt-val { font-family: var(--mono); font-size: 14px; color: var(--text); }
-.rec-opt-rec { font-size: 11px; color: var(--rec); margin-top: 4px; }
-
-.section-note { font-size: 12px; color: var(--text3); margin-bottom: 14px; line-height: 1.6; }
-
-/* GOAL RING */
-.goal-ring-wrap { display: flex; align-items: center; gap: 24px; padding: 4px 0; }
-.goal-ring-canvas { flex-shrink: 0; }
-.goal-ring-info { flex: 1; }
-.goal-ring-pct { font-family: var(--mono); font-size: 28px; font-weight: 500; color: var(--solar); }
-.goal-ring-label { font-size: 12px; color: var(--text3); margin-top: 4px; }
-.goal-ring-detail { margin-top: 12px; display: flex; flex-direction: column; gap: 6px; }
-.goal-detail-row { display: flex; justify-content: space-between; font-size: 12px; }
-.goal-detail-row .k { color: var(--text3); }
-.goal-detail-row .v { font-family: var(--mono); color: var(--text2); }
-
-.forecast-bar { display: flex; align-items: stretch; gap: 0; border-radius: 6px; overflow: hidden; height: 28px; margin: 8px 0; }
-.forecast-bar-fill { display: flex; align-items: center; justify-content: center; font-size: 10px; font-family: var(--mono); font-weight: 500; transition: width .5s; }
-
+/* ── LEGEND ── */
 .legend { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 10px; }
-.legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text3); }
-.legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.ldot   { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.litem  { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text3); }
 
-.smp-compare-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-.smp-compare-item { background: var(--bg3); border-radius: 8px; padding: 12px 14px; border: 1px solid var(--border); }
-.smp-compare-month { font-size: 11px; color: var(--text3); margin-bottom: 4px; }
-.smp-compare-mine { font-family: var(--mono); font-size: 16px; color: var(--text); }
-.smp-compare-market { font-size: 11px; color: var(--text3); margin-top: 4px; }
-.smp-compare-diff { font-size: 11px; font-family: var(--mono); margin-top: 3px; }
-.smp-compare-diff.up { color: var(--rec); }
-.smp-compare-diff.dn { color: var(--danger); }
+/* ── GOAL RING ── */
+.ring-wrap { display: flex; align-items: center; gap: 22px; padding: 4px 0; }
+.ring-info { flex: 1; }
+.ring-pct  { font-family: var(--mono); font-size: 32px; font-weight: 600; color: var(--solar); line-height: 1; }
+.ring-lbl  { font-size: 12px; color: var(--text3); margin-top: 4px; }
+.ring-detail { margin-top: 14px; display: flex; flex-direction: column; gap: 7px; }
+.ring-row  { display: flex; justify-content: space-between; font-size: 12px; }
+.ring-row .k { color: var(--text3); }
+.ring-row .v { font-family: var(--mono); color: var(--text2); font-weight: 500; }
+
+/* ── SMP COMPARE ── */
+.smp-cmp { display: grid; grid-template-columns: repeat(auto-fill,minmax(150px,1fr)); gap: 10px; }
+.smp-item { background: var(--bg3); border-radius: 8px; padding: 13px 14px; border: 1px solid var(--border); }
+.smp-month { font-size: 11px; color: var(--text3); margin-bottom: 4px; }
+.smp-mine  { font-family: var(--mono); font-size: 16px; color: var(--text); }
+.smp-mkt   { font-size: 11px; color: var(--text3); margin-top: 4px; }
+.smp-diff  { font-size: 11px; font-family: var(--mono); margin-top: 3px; }
+.smp-diff.up { color: var(--rec); }
+.smp-diff.dn { color: var(--danger); }
+
+/* ── REC OPT ── */
+.rec-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(160px,1fr)); gap: 10px; }
+.rec-card { background: var(--bg3); border: 1.5px solid var(--border); border-radius: 8px; padding: 14px; transition: all .18s; }
+.rec-card:hover { border-color: var(--rec); background: var(--recL); }
+.rec-mon { font-size: 11px; color: var(--text3); margin-bottom: 4px; }
+.rec-val { font-family: var(--mono); font-size: 15px; color: var(--text); }
+.rec-rev { font-size: 11px; color: var(--rec); margin-top: 4px; }
+.rec-st  { font-size: 10px; margin-top: 3px; }
+
+/* ── SETTINGS ── */
+.set-section { margin-bottom: 32px; }
+.set-header  { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 16px; padding-bottom: 10px; border-bottom: 2px solid var(--border); display: flex; align-items: center; gap: 8px; }
+.plant-card  { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 20px; box-shadow: var(--shadow); margin-bottom: 10px; display: flex; align-items: center; gap: 16px; }
+.plant-icon  { width: 44px; height: 44px; border-radius: 10px; background: var(--solarL); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+.plant-info  { flex: 1; }
+.plant-name  { font-weight: 700; font-size: 14px; color: var(--text); display: flex; align-items: center; gap: 7px; }
+.plant-meta  { font-size: 12px; color: var(--text3); margin-top: 3px; }
+.plant-dot   { width: 8px; height: 8px; border-radius: 50%; background: var(--rec); display: inline-block; }
+.plant-dot.off { background: var(--border2); }
+.plant-actions { display: flex; gap: 8px; }
+
+/* ── MODAL ── */
+.overlay { position: fixed; inset: 0; background: rgba(20,25,60,.3); z-index: 500; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .2s; }
+.overlay.open { opacity: 1; pointer-events: all; }
+.modal { background: var(--bg2); border-radius: 14px; padding: 28px 30px; width: 480px; max-width: 95vw; box-shadow: 0 20px 60px rgba(20,25,60,.18); transform: translateY(20px); transition: transform .22s; }
+.overlay.open .modal { transform: translateY(0); }
+.modal-title  { font-size: 16px; font-weight: 700; margin-bottom: 20px; color: var(--text); }
+.modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 22px; }
+
+.snote { font-size: 12px; color: var(--text3); margin-bottom: 14px; line-height: 1.6; }
+.fcast-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--border); }
 </style>
 </head>
 <body>
 
+<!-- ═══════════ NAV ═══════════ -->
 <nav>
-  <div class="nav-logo">SOLAR MGR</div>
+  <div class="nav-logo">☀ SOLAR MGR</div>
+  <div class="nav-plant-wrap">
+    <label>발전소</label>
+    <select class="nav-plant-sel" id="navPlantSel" onchange="switchPlant(this.value)"></select>
+  </div>
   <div class="nav-tabs">
-    <div class="nav-tab active" onclick="showPage('dashboard')">📊 대시보드</div>
-    <div class="nav-tab" onclick="showPage('input')">✏️ 데이터 입력</div>
-    <div class="nav-tab" onclick="showPage('smp')">⚡ SMP 분석</div>
-    <div class="nav-tab" onclick="showPage('rec')">🌿 REC 최적화</div>
-    <div class="nav-tab" onclick="showPage('forecast')">📈 예측/목표</div>
+    <div class="nav-tab active"  onclick="showPage('dashboard',this)">📊 대시보드</div>
+    <div class="nav-tab"         onclick="showPage('input',this)">✏️ 데이터 입력</div>
+    <div class="nav-tab"         onclick="showPage('smp',this)">⚡ SMP 분석</div>
+    <div class="nav-tab"         onclick="showPage('rec',this)">🌿 REC 최적화</div>
+    <div class="nav-tab"         onclick="showPage('forecast',this)">📈 예측/목표</div>
+    <div class="nav-tab"         onclick="showPage('settings',this)">⚙️ 설정</div>
   </div>
   <div class="nav-right">
     <span class="goal-badge" id="goalBadge">연간목표: 4,000만원</span>
   </div>
 </nav>
 
-<!-- ========== DASHBOARD ========== -->
+<!-- ═══════════ DASHBOARD ═══════════ -->
 <div class="page active" id="page-dashboard">
   <div class="kpi-grid" id="kpiGrid"></div>
-
-  <div class="grid-21">
+  <div class="g21">
     <div class="card">
       <div class="card-title">월별 수입 구조 (만원)</div>
       <div class="legend">
-        <span class="legend-item"><span class="legend-dot" style="background:var(--solar)"></span>전기료수입</span>
-        <span class="legend-item"><span class="legend-dot" style="background:var(--rec)"></span>REC수입</span>
-        <span class="legend-item"><span class="legend-dot" style="background:var(--accent)"></span>합계</span>
+        <span class="litem"><span class="ldot" style="background:var(--solar)"></span>전기료수입</span>
+        <span class="litem"><span class="ldot" style="background:var(--rec)"></span>REC수입</span>
       </div>
-      <div class="chart-wrap"><canvas id="mainBarChart"></canvas></div>
+      <div class="chart-box"><canvas id="mainBarChart"></canvas></div>
     </div>
     <div class="card">
       <div class="card-title">연간 목표 달성률</div>
       <div id="goalRingWrap"></div>
     </div>
   </div>
-
-  <div class="grid-2">
+  <div class="g2">
     <div class="card">
       <div class="card-title">누적 수입 추이</div>
-      <div class="chart-wrap"><canvas id="cumChart"></canvas></div>
+      <div class="chart-box"><canvas id="cumChart"></canvas></div>
     </div>
     <div class="card">
       <div class="card-title">수입 구성 비율</div>
-      <div class="chart-wrap"><canvas id="pieChart"></canvas></div>
+      <div class="chart-box"><canvas id="pieChart"></canvas></div>
     </div>
   </div>
-
-  <div class="insight-grid" id="insightGrid"></div>
-
+  <div class="ins-grid" id="insightGrid"></div>
   <div class="card">
     <div class="card-title">월별 상세 데이터</div>
-    <table class="data-table" id="summaryTable"></table>
+    <div style="overflow-x:auto"><table class="dtable" id="summaryTable"></table></div>
   </div>
 </div>
 
-<!-- ========== INPUT ========== -->
+<!-- ═══════════ INPUT ═══════════ -->
 <div class="page" id="page-input">
-  <div class="grid-21">
-    <div class="card">
-      <div class="card-title">월 선택 및 데이터 입력</div>
+  <div class="g21">
 
-      <div class="form-section">
-        <div class="form-section-title">기간 선택</div>
-        <div class="form-grid" style="grid-template-columns:1fr 1fr 1fr">
-          <div class="form-group">
-            <label class="form-label">연도</label>
-            <select class="form-select" id="inputYear"></select>
+    <!-- 폼 -->
+    <div class="card">
+      <div class="card-title">월 데이터 입력</div>
+
+      <div class="fs">
+        <div class="fs-title">기간 선택</div>
+        <div class="fg">
+          <div class="fgroup">
+            <label class="flabel">연도</label>
+            <select class="fsel" id="inputYear"></select>
           </div>
-          <div class="form-group">
-            <label class="form-label">월</label>
-            <select class="form-select" id="inputMonth"></select>
+          <div class="fgroup">
+            <label class="flabel">월</label>
+            <select class="fsel" id="inputMonth"></select>
           </div>
-          <div class="form-group" style="justify-content:flex-end">
-            <label class="form-label">&nbsp;</label>
+          <div class="fgroup" style="justify-content:flex-end">
+            <label class="flabel">&nbsp;</label>
             <button class="btn btn-secondary" onclick="loadMonthData()">불러오기</button>
           </div>
         </div>
       </div>
 
-      <div class="form-section">
-        <div class="form-section-title">전기 생산 및 SMP</div>
-        <div class="form-grid">
-          <div class="form-group">
-            <label class="form-label">전기 생산량 (kWh)</label>
-            <input class="form-input" id="fProd" type="number" placeholder="예: 13789">
+      <div class="fs">
+        <div class="fs-title">전기 생산 및 SMP</div>
+        <div class="fg">
+          <div class="fgroup">
+            <label class="flabel">전기 생산량 (kWh)</label>
+            <input class="finput" id="fProd" type="number" placeholder="예: 13789" oninput="autoElec()">
           </div>
-          <div class="form-group">
-            <label class="form-label">SMP 단가 (원/kWh)</label>
-            <input class="form-input" id="fSmp" type="number" step="0.01" placeholder="예: 109.99">
+          <div class="fgroup">
+            <label class="flabel">SMP 단가 (원/kWh)</label>
+            <input class="finput" id="fSmp" type="number" step="0.01" placeholder="예: 109.99" oninput="autoElec()">
           </div>
-          <div class="form-group">
-            <label class="form-label">전기료 수입 (원)</label>
-            <input class="form-input" id="fElec" type="number" placeholder="자동계산 또는 직접입력" oninput="autoCalc()">
-          </div>
-        </div>
-        <div style="font-size:11px;color:var(--text3);margin-top:8px;">※ 생산량 × SMP 단가 자동계산. 계약 단가가 다를 경우 직접 입력하세요.</div>
-      </div>
-
-      <div class="form-section">
-        <div class="form-section-title">REC 거래</div>
-        <div class="form-grid">
-          <div class="form-group">
-            <label class="form-label">REC 수량 (개)</label>
-            <input class="form-input" id="fRecQty" type="number" placeholder="예: 16">
-          </div>
-          <div class="form-group">
-            <label class="form-label">REC 단가 (원)</label>
-            <input class="form-input" id="fRecPrice" type="number" placeholder="예: 70800">
-          </div>
-          <div class="form-group">
-            <label class="form-label">REC 수입 (원)</label>
-            <input class="form-input" id="fRecRev" type="number" placeholder="자동계산 또는 직접입력" oninput="autoCalcRec()">
+          <div class="fgroup">
+            <label class="flabel">전기료 수입 (원)<span class="tag">★자동계산</span></label>
+            <input class="finput" id="fElec" type="number" placeholder="생산량×단가 자동입력" oninput="elecManual=true;this.classList.remove('auto')">
           </div>
         </div>
-        <div style="font-size:11px;color:var(--text3);margin-top:8px;">※ 4월처럼 아직 REC 금액이 나오지 않은 경우 비워두세요.</div>
+        <div class="fhint">※ 생산량과 SMP 단가를 입력하면 전기료 수입이 자동계산됩니다. 계약단가가 다를 경우 직접 수정하세요.</div>
       </div>
 
-      <div class="form-section">
-        <div class="form-section-title">시장 데이터 (선택)</div>
-        <div class="form-grid" style="grid-template-columns:1fr 1fr">
-          <div class="form-group">
-            <label class="form-label">시장 평균 SMP (원/kWh)</label>
-            <input class="form-input" id="fMktSmp" type="number" step="0.01" placeholder="예: 115.00">
+      <div class="fs">
+        <div class="fs-title">REC 거래</div>
+        <div class="fg">
+          <div class="fgroup">
+            <label class="flabel">REC 수량 (개)</label>
+            <input class="finput" id="fRecQty" type="number" placeholder="예: 16" oninput="autoRec()">
           </div>
-          <div class="form-group">
-            <label class="form-label">예상 일조시간 (h/월, 선택)</label>
-            <input class="form-input" id="fSun" type="number" placeholder="예: 168">
+          <div class="fgroup">
+            <label class="flabel">REC 단가 (원)</label>
+            <input class="finput" id="fRecPrice" type="number" placeholder="예: 70800" oninput="autoRec()">
+          </div>
+          <div class="fgroup">
+            <label class="flabel">REC 수입 (원)<span class="tag">★자동계산</span></label>
+            <input class="finput" id="fRecRev" type="number" placeholder="수량×단가 자동입력" oninput="recManual=true;this.classList.remove('auto')">
+          </div>
+        </div>
+        <div class="fhint">※ REC 수량과 단가를 입력하면 수입이 자동계산됩니다. 미확정이면 비워두세요.</div>
+      </div>
+
+      <div class="fs">
+        <div class="fs-title">시장 데이터 (선택)</div>
+        <div class="fg" style="grid-template-columns:1fr 1fr">
+          <div class="fgroup">
+            <label class="flabel">시장 평균 SMP (원/kWh)</label>
+            <input class="finput" id="fMktSmp" type="number" step="0.01" placeholder="예: 115.00">
+          </div>
+          <div class="fgroup">
+            <label class="flabel">일조시간 (h/월, 선택)</label>
+            <input class="finput" id="fSun" type="number" placeholder="예: 168">
           </div>
         </div>
       </div>
 
-      <div class="form-section">
-        <div class="form-section-title">메모</div>
-        <div class="form-group">
-          <input class="form-input" id="fNote" type="text" placeholder="이번 달 특이사항 (예: 설비점검, 이상날씨 등)">
+      <div class="fs">
+        <div class="fs-title">메모</div>
+        <div class="fgroup">
+          <input class="finput" id="fNote" type="text" placeholder="특이사항 (예: 설비점검, 이상날씨 등)">
         </div>
       </div>
 
@@ -310,117 +399,168 @@ nav { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 0
       </div>
     </div>
 
-    <div class="card">
-      <div class="card-title">입력된 데이터 목록</div>
-      <div class="month-entry-list" id="monthList"></div>
-      <div style="margin-top:16px;">
-        <div class="card-title">데이터 백업/복원</div>
-        <div class="btn-row" style="flex-wrap:wrap">
-          <button class="btn btn-secondary" onclick="exportData()">📤 JSON 내보내기</button>
-          <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">📥 JSON 가져오기</button>
+    <!-- 목록 + 백업 -->
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="card" style="flex:1;overflow:hidden">
+        <div class="card-title">입력된 데이터 목록</div>
+        <div class="mlist" id="monthList"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">데이터 백업 / 복원</div>
+        <div class="btn-row" style="margin-top:0">
+          <button class="btn btn-secondary btn-sm" onclick="exportData()">📤 내보내기</button>
+          <button class="btn btn-secondary btn-sm" onclick="document.getElementById('importFile').click()">📥 가져오기</button>
           <input type="file" id="importFile" style="display:none" accept=".json" onchange="importData(this)">
         </div>
       </div>
     </div>
+
   </div>
 </div>
 
-<!-- ========== SMP ========== -->
+<!-- ═══════════ SMP ═══════════ -->
 <div class="page" id="page-smp">
-  <div class="grid-2" style="margin-bottom:16px">
+  <div class="g2" style="margin-bottom:16px">
     <div class="card">
       <div class="card-title">SMP 단가 추이 (원/kWh)</div>
       <div class="legend">
-        <span class="legend-item"><span class="legend-dot" style="background:var(--solar)"></span>우리 단가</span>
-        <span class="legend-item"><span class="legend-dot" style="background:var(--accent)"></span>시장 평균</span>
+        <span class="litem"><span class="ldot" style="background:var(--solar)"></span>우리 단가</span>
+        <span class="litem"><span class="ldot" style="background:var(--accent)"></span>시장 평균</span>
       </div>
-      <div class="chart-wrap tall"><canvas id="smpLineChart"></canvas></div>
+      <div class="chart-box tall"><canvas id="smpLineChart"></canvas></div>
     </div>
     <div class="card">
-      <div class="card-title">SMP 대비 전기료 수입</div>
-      <div class="chart-wrap tall"><canvas id="smpRevenueChart"></canvas></div>
+      <div class="card-title">전기료 수입 추이 (만원)</div>
+      <div class="chart-box tall"><canvas id="smpRevChart"></canvas></div>
     </div>
   </div>
-
   <div class="card" style="margin-bottom:16px">
     <div class="card-title">SMP vs 시장 평균 비교</div>
-    <div class="section-note">시장 평균 SMP를 입력한 달만 표시됩니다. 데이터 입력 시 시장 평균 SMP를 함께 입력해주세요.</div>
-    <div class="smp-compare-row" id="smpCompareRow"></div>
+    <div class="snote">데이터 입력 시 시장 평균 SMP를 함께 입력하면 월별 비교가 표시됩니다.</div>
+    <div class="smp-cmp" id="smpCmpRow"></div>
   </div>
-
   <div class="card">
     <div class="card-title">전기 생산량 추이 (kWh)</div>
-    <div class="chart-wrap"><canvas id="prodChart"></canvas></div>
+    <div class="chart-box"><canvas id="prodChart"></canvas></div>
   </div>
 </div>
 
-<!-- ========== REC ========== -->
+<!-- ═══════════ REC ═══════════ -->
 <div class="page" id="page-rec">
-  <div class="insight-grid" style="margin-bottom:16px" id="recInsightGrid"></div>
-
-  <div class="grid-2" style="margin-bottom:16px">
+  <div class="ins-grid" id="recInsGrid"></div>
+  <div class="g2" style="margin-bottom:16px">
     <div class="card">
       <div class="card-title">REC 수량 및 단가 추이</div>
       <div class="legend">
-        <span class="legend-item"><span class="legend-dot" style="background:var(--rec)"></span>REC 수량</span>
-        <span class="legend-item"><span class="legend-dot" style="background:var(--warn)"></span>REC 단가 (백원)</span>
+        <span class="litem"><span class="ldot" style="background:var(--rec)"></span>REC 수량</span>
+        <span class="litem"><span class="ldot" style="background:var(--warn)"></span>REC 단가(백원)</span>
       </div>
-      <div class="chart-wrap"><canvas id="recChart"></canvas></div>
+      <div class="chart-box"><canvas id="recChart"></canvas></div>
     </div>
     <div class="card">
       <div class="card-title">REC 수입 추이 (만원)</div>
-      <div class="chart-wrap"><canvas id="recRevChart"></canvas></div>
+      <div class="chart-box"><canvas id="recRevChart"></canvas></div>
     </div>
   </div>
-
   <div class="card" style="margin-bottom:16px">
     <div class="card-title">REC 판매 타이밍 최적화</div>
-    <div class="section-note">단가가 높은 달에 몰아서 판매하면 수익을 극대화할 수 있습니다. 아래는 입력된 데이터 기반의 분석입니다.</div>
-    <div id="recOptimizeContent"></div>
+    <div class="snote">단가가 높은 달 순서로 정렬합니다. 미판매 REC는 단가 상승 시점을 노려 판매하세요.</div>
+    <div id="recOptContent"></div>
   </div>
-
   <div class="card">
     <div class="card-title">미판매 REC 현황</div>
-    <div id="recPendingContent"></div>
+    <div id="recPendContent"></div>
   </div>
 </div>
 
-<!-- ========== FORECAST ========== -->
+<!-- ═══════════ FORECAST ═══════════ -->
 <div class="page" id="page-forecast">
-  <div class="kpi-grid" id="forecastKpi"></div>
-
-  <div class="grid-2" style="margin-bottom:16px">
+  <div class="kpi-grid" id="fcastKpi"></div>
+  <div class="g2" style="margin-bottom:16px">
     <div class="card">
       <div class="card-title">연간 목표 달성 시뮬레이션</div>
-      <div class="chart-wrap tall"><canvas id="forecastChart"></canvas></div>
+      <div class="chart-box tall"><canvas id="fcastChart"></canvas></div>
     </div>
     <div class="card">
       <div class="card-title">월별 수익성 예측</div>
-      <div class="section-note">계절별 평균 일조량 패턴을 반영한 수익 예측입니다.</div>
-      <div id="forecastMonthList"></div>
+      <div class="snote">계절별 일조량 패턴을 반영한 잔여 월 예측입니다.</div>
+      <div id="fcastMonthList"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">목표 달성 시나리오</div>
+    <div class="g3" id="scenarioGrid"></div>
+  </div>
+</div>
+
+<!-- ═══════════ SETTINGS ═══════════ -->
+<div class="page" id="page-settings">
+
+  <div class="set-section">
+    <div class="set-header">🏭 발전소 관리</div>
+    <div id="plantListUI"></div>
+    <button class="btn btn-accent" onclick="openModal()">+ 발전소 추가</button>
+  </div>
+
+  <div class="set-section">
+    <div class="set-header">🎯 연간 목표 설정</div>
+    <div class="card" style="max-width:520px">
+      <div class="fg" style="grid-template-columns:1fr 1fr">
+        <div class="fgroup">
+          <label class="flabel">연간 목표 수입 (만원)</label>
+          <input class="finput" id="fGoal" type="number" placeholder="4000">
+        </div>
+        <div class="fgroup">
+          <label class="flabel">설비 용량 (kW)</label>
+          <input class="finput" id="fCapacity" type="number" placeholder="100">
+        </div>
+      </div>
+      <div class="btn-row"><button class="btn btn-primary" onclick="saveSettings()">저장</button></div>
     </div>
   </div>
 
-  <div class="card" style="margin-bottom:16px">
-    <div class="card-title">목표 달성 시나리오</div>
-    <div class="grid-3" id="scenarioGrid"></div>
+  <div class="set-section">
+    <div class="set-header">💾 데이터 관리</div>
+    <div class="card" style="max-width:520px">
+      <p style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.7">
+        전체 데이터를 JSON 파일로 내보내거나 가져올 수 있습니다.<br>여러 기기에서 공유하려면 내보내기 후 다른 기기에서 가져오기 하세요.
+      </p>
+      <div class="btn-row" style="margin-top:0">
+        <button class="btn btn-secondary" onclick="exportData()">📤 전체 내보내기</button>
+        <button class="btn btn-secondary" onclick="document.getElementById('importFile2').click()">📥 가져오기</button>
+        <input type="file" id="importFile2" style="display:none" accept=".json" onchange="importData(this)">
+        <button class="btn btn-danger" onclick="resetAll()">🗑 전체 초기화</button>
+      </div>
+    </div>
   </div>
 
-  <div class="card">
-    <div class="card-title">연간 목표 설정</div>
-    <div class="form-grid" style="grid-template-columns:1fr 1fr auto; align-items:flex-end; gap:12px;">
-      <div class="form-group">
-        <label class="form-label">연간 목표 (만원)</label>
-        <input class="form-input" id="fGoal" type="number" placeholder="4000">
+</div>
+
+<!-- ═══════════ PLANT MODAL ═══════════ -->
+<div class="overlay" id="plantOverlay">
+  <div class="modal">
+    <div class="modal-title" id="modalTitle">발전소 추가</div>
+    <div class="fgroup" style="margin-bottom:13px">
+      <label class="flabel">발전소 이름</label>
+      <input class="finput" id="mName" placeholder="예: 제주 1호기">
+    </div>
+    <div class="fg" style="grid-template-columns:1fr 1fr;margin-bottom:13px">
+      <div class="fgroup">
+        <label class="flabel">설비 용량 (kW)</label>
+        <input class="finput" id="mCap" type="number" placeholder="예: 100">
       </div>
-      <div class="form-group">
-        <label class="form-label">설비 용량 (kW)</label>
-        <input class="form-input" id="fCapacity" type="number" placeholder="예: 100">
+      <div class="fgroup">
+        <label class="flabel">연간 목표 (만원)</label>
+        <input class="finput" id="mGoal" type="number" placeholder="예: 4000">
       </div>
-      <div class="form-group">
-        <label class="form-label">&nbsp;</label>
-        <button class="btn btn-primary" onclick="saveSettings()">저장</button>
-      </div>
+    </div>
+    <div class="fgroup">
+      <label class="flabel">위치 / 메모</label>
+      <input class="finput" id="mNote" placeholder="예: 전라남도 해남군">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">취소</button>
+      <button class="btn btn-primary" onclick="savePlant()">저장</button>
     </div>
   </div>
 </div>
@@ -428,619 +568,475 @@ nav { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 0
 <div class="toast" id="toast"></div>
 
 <script>
-// ======= DATA STORE =======
-const STORAGE_KEY = 'solar_mgr_v1';
-let db = { entries: {}, settings: { goal: 4000, capacity: 100 } };
-
-function load() {
-  try { const s = localStorage.getItem(STORAGE_KEY); if(s) db = JSON.parse(s); } catch(e){}
-  // seed with provided data
-  if(!Object.keys(db.entries).length) seedData();
-}
-function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(db)); }
-
-function seedData() {
-  const seed = [
-    { year:2026, month:1, prod:null, smp:null, elec:847744, recQty:8, recPrice:70600, recRev:564800, mktSmp:null, sun:null, note:'1,2월 SMP 입력예정' },
-    { year:2026, month:2, prod:null, smp:null, elec:1216161, recQty:13, recPrice:70600, recRev:917800, mktSmp:null, sun:null, note:'1,2월 SMP 입력예정' },
-    { year:2026, month:3, prod:13789, smp:109.99, elec:1516652, recQty:16, recPrice:70800, recRev:1132800, mktSmp:null, sun:null, note:'' },
-    { year:2026, month:4, prod:14834, smp:118.92, elec:1764059, recQty:null, recPrice:null, recRev:0, mktSmp:null, sun:null, note:'4월 REC 미확정' },
-  ];
-  seed.forEach(d => { db.entries[`${d.year}-${d.month}`] = d; });
-  save();
-}
-
-// ======= HELPERS =======
-const wan = v => v != null && v !== '' ? Math.round(v/10000) : null;
-const wanFmt = v => v != null ? `${v.toLocaleString()}만` : '-';
-const numFmt = v => v != null && v !== 0 ? v.toLocaleString() : '-';
-const months = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
-// Solar seasonality index (relative, summer peak in Korea)
-const seasonIdx = [0.62,0.72,0.88,1.00,1.05,1.02,0.88,0.90,0.95,0.88,0.70,0.60];
-
-function getEntries() {
-  return Object.values(db.entries).sort((a,b) => a.year !== b.year ? a.year-b.year : a.month-b.month);
-}
-function getEntry(y,m) { return db.entries[`${y}-${m}`]; }
-
-function totalIncome(e) {
-  return (e.elec||0) + (e.recRev||0);
-}
-
-// ======= CHARTS MAP =======
-const charts = {};
-function makeChart(id, config) {
-  if(charts[id]) charts[id].destroy();
-  const ctx = document.getElementById(id);
-  if(!ctx) return;
-  charts[id] = new Chart(ctx, config);
-  return charts[id];
-}
-
-const chartDefaults = {
-  responsive: true, maintainAspectRatio: false,
-  plugins: { legend: { display: false }, tooltip: { backgroundColor: '#1c2128', borderColor: '#30363d', borderWidth: 1, titleColor: '#8b949e', bodyColor: '#e6edf3', padding: 10 } },
-  scales: {
-    x: { ticks: { color: '#6e7681', font: { size: 11 } }, grid: { display: false }, border: { display: false } },
-    y: { ticks: { color: '#6e7681', font: { size: 11 } }, grid: { color: 'rgba(48,54,61,0.8)' }, border: { display: false } }
+// ═══════════ STORE ═══════════
+const KEY = 'solar_v3';
+let db = {
+  currentPlant: 'p1',
+  plants: {
+    p1: { id:'p1', name:'1호 발전소', capacity:100, goal:4000, note:'', entries:{} }
   }
 };
 
-// ======= NAVIGATION =======
-function showPage(id) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+function loadDB() {
+  try { const s=localStorage.getItem(KEY); if(s) db=JSON.parse(s); } catch(e){}
+  if(!db.plants) db.plants={};
+  if(!db.currentPlant || !db.plants[db.currentPlant])
+    db.currentPlant = Object.keys(db.plants)[0];
+  if(!Object.keys(db.plants).length) {
+    db.plants.p1 = {id:'p1',name:'1호 발전소',capacity:100,goal:4000,note:'',entries:{}};
+    db.currentPlant='p1';
+    seedData('p1');
+  }
+}
+function saveDB() { localStorage.setItem(KEY, JSON.stringify(db)); }
+
+function cp()   { return db.plants[db.currentPlant]; }
+function entries(pid) {
+  const p = pid ? db.plants[pid] : cp();
+  return Object.values(p.entries).sort((a,b)=>a.year!==b.year?a.year-b.year:a.month-b.month);
+}
+function getEntry(y,m) { return cp().entries[`${y}-${m}`]; }
+function totalIncome(e) { return (e.elec||0)+(e.recRev||0); }
+
+function seedData(pid) {
+  const rows=[
+    {year:2026,month:1,prod:null,smp:null,elec:847744,recQty:8,recPrice:70600,recRev:564800,mktSmp:null,sun:null,note:'SMP 입력예정'},
+    {year:2026,month:2,prod:null,smp:null,elec:1216161,recQty:13,recPrice:70600,recRev:917800,mktSmp:null,sun:null,note:'SMP 입력예정'},
+    {year:2026,month:3,prod:13789,smp:109.99,elec:1516652,recQty:16,recPrice:70800,recRev:1132800,mktSmp:null,sun:null,note:''},
+    {year:2026,month:4,prod:14834,smp:118.92,elec:1764059,recQty:null,recPrice:null,recRev:0,mktSmp:null,sun:null,note:'4월 REC 미확정'},
+  ];
+  rows.forEach(r=>{ db.plants[pid].entries[`${r.year}-${r.month}`]=r; });
+  saveDB();
+}
+
+// ═══════════ HELPERS ═══════════
+const wan    = v => (v!=null&&v!=='') ? Math.round(v/10000) : null;
+const wanFmt = v => v!=null ? `${v.toLocaleString()}만` : '-';
+const nFmt   = v => (v!=null&&v!==0) ? v.toLocaleString() : '-';
+const MO = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+const SI = [0.62,0.72,0.88,1.00,1.05,1.02,0.88,0.90,0.95,0.88,0.70,0.60]; // seasonal index
+
+// ═══════════ CHARTS ═══════════
+const CH={};
+function mkChart(id,cfg){
+  if(CH[id]) CH[id].destroy();
+  const el=document.getElementById(id); if(!el) return;
+  CH[id]=new Chart(el,cfg);
+}
+const CD={
+  responsive:true, maintainAspectRatio:false,
+  plugins:{legend:{display:false},tooltip:{backgroundColor:'#fff',borderColor:'#e2e6f0',borderWidth:1,titleColor:'#8b93b8',bodyColor:'#1a1d2e',padding:10}},
+  scales:{
+    x:{ticks:{color:'#8b93b8',font:{size:11}},grid:{display:false},border:{display:false}},
+    y:{ticks:{color:'#8b93b8',font:{size:11}},grid:{color:'rgba(226,230,240,.9)'},border:{display:false}}
+  }
+};
+
+// ═══════════ NAV ═══════════
+function showPage(id,tab){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
-  event.target.classList.add('active');
-  renderPage(id);
-}
-function renderPage(id) {
-  if(id==='dashboard') renderDashboard();
-  if(id==='input') renderInput();
-  if(id==='smp') renderSmp();
-  if(id==='rec') renderRec();
-  if(id==='forecast') renderForecast();
+  if(tab) tab.classList.add('active');
+  ({dashboard:renderDash,input:renderInput,smp:renderSmp,rec:renderRec,forecast:renderForecast,settings:renderSettings}[id]||(() => {}))();
 }
 
-// ======= DASHBOARD =======
-function renderDashboard() {
-  const entries = getEntries();
-  const totalElec = entries.reduce((s,e) => s+(e.elec||0), 0);
-  const totalRec  = entries.reduce((s,e) => s+(e.recRev||0), 0);
-  const total = totalElec + totalRec;
-  const goal = (db.settings.goal||4000) * 10000;
-  const pct = Math.min(100, Math.round(total/goal*100));
+function rebuildPlantSel(){
+  const sel=document.getElementById('navPlantSel');
+  sel.innerHTML=Object.values(db.plants).map(p=>`<option value="${p.id}"${p.id===db.currentPlant?' selected':''}>${p.name}</option>`).join('');
+}
+function switchPlant(pid){
+  db.currentPlant=pid; saveDB(); updateGoalBadge();
+  renderDash();
+}
+function updateGoalBadge(){
+  document.getElementById('goalBadge').textContent=`연간목표: ${(cp().goal||4000).toLocaleString()}만원`;
+}
 
-  // KPI
-  const last = entries[entries.length-1];
-  const prev = entries.length>1 ? entries[entries.length-2] : null;
-  const lastTotal = last ? totalIncome(last) : 0;
-  const prevTotal = prev ? totalIncome(prev) : 0;
-  const delta = prevTotal ? ((lastTotal-prevTotal)/prevTotal*100).toFixed(1) : null;
+// ═══════════ DASHBOARD ═══════════
+function renderDash(){
+  const ents=entries();
+  const p=cp();
+  const goal=(p.goal||4000)*10000;
+  const totElec=ents.reduce((s,e)=>s+(e.elec||0),0);
+  const totRec =ents.reduce((s,e)=>s+(e.recRev||0),0);
+  const tot=totElec+totRec;
+  const pct=Math.min(100,Math.round(tot/goal*100));
+  const last=ents[ents.length-1], prev=ents.length>1?ents[ents.length-2]:null;
+  const lastT=last?totalIncome(last):0, prevT=prev?totalIncome(prev):0;
+  const delta=prevT?((lastT-prevT)/prevT*100).toFixed(1):null;
 
-  document.getElementById('kpiGrid').innerHTML = `
+  document.getElementById('kpiGrid').innerHTML=`
     <div class="kpi-card">
       <div class="kpi-label">누적 총수입</div>
-      <div class="kpi-value" style="color:var(--solar)">${wanFmt(wan(total))}</div>
-      <div class="kpi-sub">목표 ${(db.settings.goal||4000).toLocaleString()}만원 대비 ${pct}%</div>
-      <div class="progress-wrap"><div class="progress-bar" style="width:${pct}%;background:var(--solar)"></div></div>
+      <div class="kpi-value" style="color:var(--solar)">${wanFmt(wan(tot))}</div>
+      <div class="kpi-sub">목표 ${(p.goal||4000).toLocaleString()}만원 대비 ${pct}%</div>
+      <div class="prog-wrap"><div class="prog-bar" style="width:${pct}%;background:var(--solar)"></div></div>
     </div>
     <div class="kpi-card">
       <div class="kpi-label">전기료 수입 (SMP)</div>
-      <div class="kpi-value" style="color:var(--solar)">${wanFmt(wan(totalElec))}</div>
-      <div class="kpi-sub">전체의 ${total?Math.round(totalElec/total*100):0}%</div>
+      <div class="kpi-value" style="color:var(--accent)">${wanFmt(wan(totElec))}</div>
+      <div class="kpi-sub">전체의 ${tot?Math.round(totElec/tot*100):0}%</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-label">REC 수입</div>
-      <div class="kpi-value" style="color:var(--rec)">${wanFmt(wan(totalRec))}</div>
-      <div class="kpi-sub">전체의 ${total?Math.round(totalRec/total*100):0}%</div>
+      <div class="kpi-value" style="color:var(--rec)">${wanFmt(wan(totRec))}</div>
+      <div class="kpi-sub">전체의 ${tot?Math.round(totRec/tot*100):0}%</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-label">최근월 수입 (${last?last.month+'월':'-'})</div>
-      <div class="kpi-value">${wanFmt(wan(lastTotal))}</div>
-      ${delta !== null ? `<div class="kpi-delta ${parseFloat(delta)>=0?'up':'down'}">${parseFloat(delta)>=0?'▲':'▼'} ${Math.abs(delta)}% 전월대비</div>` : ''}
+      <div class="kpi-value">${wanFmt(wan(lastT))}</div>
+      ${delta!==null?`<div class="kpi-delta ${parseFloat(delta)>=0?'up':'dn'}">${parseFloat(delta)>=0?'▲':'▼'} ${Math.abs(delta)}% 전월대비</div>`:''}
     </div>
   `;
 
-  // Main bar chart
-  const labels = entries.map(e => `${e.month}월`);
-  const elecData = entries.map(e => wan(e.elec));
-  const recData  = entries.map(e => wan(e.recRev));
-  const sumData  = entries.map(e => wan(totalIncome(e)));
-  makeChart('mainBarChart', {
-    type:'bar',
-    data:{ labels, datasets:[
-      { label:'전기료수입', data:elecData, backgroundColor:'rgba(240,165,0,0.75)', borderRadius:4, stack:'s' },
-      { label:'REC수입',   data:recData,  backgroundColor:'rgba(63,185,80,0.75)', borderRadius:4, stack:'s' },
-    ]},
-    options:{ ...chartDefaults,
-      plugins:{ ...chartDefaults.plugins, tooltip:{ ...chartDefaults.plugins.tooltip, callbacks:{ label: i=>`${i.dataset.label}: ${i.raw}만원` } } },
-      scales:{ x:{...chartDefaults.scales.x,stacked:true}, y:{...chartDefaults.scales.y,stacked:true,ticks:{...chartDefaults.scales.y.ticks,callback:v=>v+'만'}} }
-    }
-  });
+  const lbs=ents.map(e=>`${e.month}월`);
+  mkChart('mainBarChart',{type:'bar',data:{labels:lbs,datasets:[
+    {label:'전기료수입',data:ents.map(e=>wan(e.elec)),backgroundColor:'rgba(232,146,10,.75)',borderRadius:5,stack:'s'},
+    {label:'REC수입',   data:ents.map(e=>wan(e.recRev)),backgroundColor:'rgba(22,154,70,.65)',borderRadius:5,stack:'s'}
+  ]},options:{...CD,scales:{x:{...CD.scales.x,stacked:true},y:{...CD.scales.y,stacked:true,ticks:{...CD.scales.y.ticks,callback:v=>v+'만'}}},
+    plugins:{...CD.plugins,tooltip:{...CD.plugins.tooltip,callbacks:{label:i=>`${i.dataset.label}: ${i.raw}만원`}}}}});
 
   // Goal ring
-  const goalWan = db.settings.goal||4000;
-  const doneWan = wan(total)||0;
-  const remain = Math.max(0, goalWan - doneWan);
-  const months_left = 12 - entries.length;
-  document.getElementById('goalRingWrap').innerHTML = `
-    <div class="goal-ring-wrap">
-      <canvas class="goal-ring-canvas" id="goalRingCanvas" width="120" height="120"></canvas>
-      <div class="goal-ring-info">
-        <div class="goal-ring-pct">${pct}%</div>
-        <div class="goal-ring-label">연간 목표 달성률</div>
-        <div class="goal-ring-detail">
-          <div class="goal-detail-row"><span class="k">달성</span><span class="v">${doneWan.toLocaleString()}만원</span></div>
-          <div class="goal-detail-row"><span class="k">잔여</span><span class="v">${remain.toLocaleString()}만원</span></div>
-          <div class="goal-detail-row"><span class="k">월평균 필요</span><span class="v">${months_left>0?Math.ceil(remain/months_left).toLocaleString():'-'}만원</span></div>
+  const gW=p.goal||4000,dW=wan(tot)||0,rem=Math.max(0,gW-dW),ml=12-ents.length;
+  document.getElementById('goalRingWrap').innerHTML=`
+    <div class="ring-wrap">
+      <canvas id="goalCanvas" width="130" height="130"></canvas>
+      <div class="ring-info">
+        <div class="ring-pct">${pct}%</div>
+        <div class="ring-lbl">연간 목표 달성률</div>
+        <div class="ring-detail">
+          <div class="ring-row"><span class="k">달성</span><span class="v">${dW.toLocaleString()}만원</span></div>
+          <div class="ring-row"><span class="k">잔여</span><span class="v">${rem.toLocaleString()}만원</span></div>
+          <div class="ring-row"><span class="k">월평균 필요</span><span class="v">${ml>0?Math.ceil(rem/ml).toLocaleString():'-'}만원</span></div>
         </div>
       </div>
-    </div>
-  `;
-  // Draw ring canvas
-  setTimeout(() => {
-    const c = document.getElementById('goalRingCanvas');
-    if(!c) return;
-    const ctx2 = c.getContext('2d');
-    const cx=60,cy=60,r=50,lw=12;
-    ctx2.clearRect(0,0,120,120);
-    ctx2.beginPath(); ctx2.arc(cx,cy,r,-Math.PI/2,Math.PI*2*1.5); ctx2.strokeStyle='#1c2128'; ctx2.lineWidth=lw; ctx2.stroke();
-    ctx2.beginPath(); ctx2.arc(cx,cy,r,-Math.PI/2,-Math.PI/2+Math.PI*2*(pct/100)); ctx2.strokeStyle='#f0a500'; ctx2.lineWidth=lw; ctx2.lineCap='round'; ctx2.stroke();
-  },50);
+    </div>`;
+  setTimeout(()=>{
+    const c=document.getElementById('goalCanvas'); if(!c) return;
+    const cx2=c.getContext('2d'),x=65,y=65,r=54,lw=13;
+    cx2.clearRect(0,0,130,130);
+    cx2.beginPath();cx2.arc(x,y,r,-Math.PI/2,Math.PI*2*1.5);cx2.strokeStyle='#eef0f8';cx2.lineWidth=lw;cx2.stroke();
+    if(pct>0){cx2.beginPath();cx2.arc(x,y,r,-Math.PI/2,-Math.PI/2+Math.PI*2*(pct/100));cx2.strokeStyle='#e8920a';cx2.lineWidth=lw;cx2.lineCap='round';cx2.stroke();}
+  },60);
 
-  // Cumulative chart
   let cum=0;
-  const cumData = entries.map(e => { cum += wan(totalIncome(e))||0; return cum; });
-  makeChart('cumChart', {
-    type:'line',
-    data:{ labels, datasets:[
-      { label:'누적수입', data:cumData, borderColor:'#f0a500', backgroundColor:'rgba(240,165,0,0.08)', fill:true, tension:0.4, pointBackgroundColor:'#f0a500', pointRadius:5 },
-      { label:'목표선', data:Array(12).fill(null).map((_,i)=> Math.round(goalWan*(i+1)/12)).slice(0,entries.length), borderColor:'rgba(88,166,255,0.4)', borderDash:[4,4], pointRadius:0, tension:0 }
-    ]},
-    options:{ ...chartDefaults, plugins:{...chartDefaults.plugins,tooltip:{...chartDefaults.plugins.tooltip,callbacks:{label:i=>`${i.dataset.label}: ${i.raw}만원`}}}, scales:{x:{...chartDefaults.scales.x},y:{...chartDefaults.scales.y,ticks:{...chartDefaults.scales.y.ticks,callback:v=>v+'만'}}} }
-  });
+  mkChart('cumChart',{type:'line',data:{labels:lbs,datasets:[
+    {label:'누적수입',data:ents.map(e=>{cum+=wan(totalIncome(e))||0;return cum;}),borderColor:'#e8920a',backgroundColor:'rgba(232,146,10,.07)',fill:true,tension:.4,pointBackgroundColor:'#e8920a',pointRadius:5},
+    {label:'목표선',data:ents.map((_,i)=>Math.round(gW*(i+1)/12)),borderColor:'rgba(47,110,245,.35)',borderDash:[5,4],pointRadius:0,tension:0}
+  ]},options:{...CD,scales:{x:{...CD.scales.x},y:{...CD.scales.y,ticks:{...CD.scales.y.ticks,callback:v=>v+'만'}}},
+    plugins:{...CD.plugins,tooltip:{...CD.plugins.tooltip,callbacks:{label:i=>`${i.dataset.label}: ${i.raw}만원`}}}}});
 
-  // Pie
-  makeChart('pieChart', {
-    type:'doughnut',
-    data:{ labels:['전기료수입','REC수입'], datasets:[{ data:[wan(totalElec),wan(totalRec)], backgroundColor:['rgba(240,165,0,0.85)','rgba(63,185,80,0.85)'], borderWidth:0, hoverOffset:6 }] },
-    options:{ responsive:true, maintainAspectRatio:false, cutout:'65%', plugins:{ legend:{ display:true, position:'bottom', labels:{ color:'#8b949e', font:{size:11}, padding:16 } }, tooltip:{ callbacks:{ label:i=>`${i.label}: ${i.raw}만원` } } } }
-  });
+  mkChart('pieChart',{type:'doughnut',data:{labels:['전기료수입','REC수입'],datasets:[{data:[wan(totElec),wan(totRec)],backgroundColor:['rgba(232,146,10,.85)','rgba(22,154,70,.8)'],borderWidth:0,hoverOffset:6}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'66%',
+      plugins:{legend:{display:true,position:'bottom',labels:{color:'#8b93b8',font:{size:11},padding:16}},tooltip:{callbacks:{label:i=>`${i.label}: ${i.raw}만원`}}}}});
 
   // Insights
-  renderInsights(entries, total);
+  const ins=[];
+  const smpE=ents.filter(e=>e.smp);
+  if(smpE.length>=2){const la=smpE[smpE.length-1],pr=smpE[smpE.length-2],d=((la.smp-pr.smp)/pr.smp*100).toFixed(1);
+    ins.push({c:parseFloat(d)>=0?'green':'red',t:'SMP 단가 추세',b:`${pr.month}월 ${pr.smp}원 → ${la.month}월 <strong>${la.smp}원</strong> (${parseFloat(d)>=0?'+':''}${d}%)`});}
+  const pRec=ents.filter(e=>e.recQty&&!e.recRev);
+  if(pRec.length) ins.push({c:'yellow',t:'REC 미판매',b:`${pRec.map(e=>e.month+'월').join(', ')} REC 미확정 — 단가 추이 확인 권장`});
+  const avg=tot/(ents.length||1),proj=avg*12;
+  ins.push({c:proj>=goal?'green':'blue',t:'연간 페이스',b:`월평균 <strong>${wanFmt(wan(avg))}</strong> → 연간 <strong>${wanFmt(wan(proj))}</strong> 예상 (목표 ${Math.round(proj/goal*100)}%)`});
+  const prdE=ents.filter(e=>e.prod);
+  if(prdE.length>=2){const lp=prdE[prdE.length-1],pp=prdE[prdE.length-2],pd=((lp.prod-pp.prod)/pp.prod*100).toFixed(1);
+    ins.push({c:'blue',t:'생산량 변화',b:`${pp.month}월 ${pp.prod.toLocaleString()} → ${lp.month}월 <strong>${lp.prod.toLocaleString()}kWh</strong> (${parseFloat(pd)>=0?'+':''}${pd}%)`});}
+  if(ents.length){const best=[...ents].sort((a,b)=>totalIncome(b)-totalIncome(a))[0];
+    ins.push({c:'yellow',t:'최고 수익 월',b:`<strong>${best.month}월</strong> — ${wanFmt(wan(totalIncome(best)))}${best.smp?` (SMP ${best.smp}원)`:''}`});}
+  if(ml>0){const rem2=Math.max(0,goal-tot);
+    ins.push({c:'blue',t:'잔여 목표',b:`${ml}개월 내 <strong>${wanFmt(wan(rem2))}</strong> 추가 달성 필요 (월 ${wanFmt(wan(rem2/ml))})`});}
+  document.getElementById('insightGrid').style.gridTemplateColumns=`repeat(${Math.min(3,ins.length)},1fr)`;
+  document.getElementById('insightGrid').innerHTML=ins.map(i=>`<div class="ins ${i.c}"><div class="ins-title">${i.t}</div><div class="ins-body">${i.b}</div></div>`).join('');
 
   // Table
-  let tableHtml = `<thead><tr>
-    <th>월</th><th>전기료수입</th><th>REC수입</th><th>합계</th><th>생산량</th><th>SMP단가</th><th>REC수량</th><th>상태</th>
-  </tr></thead><tbody>`;
-  let totE=0,totR=0,totT=0;
-  entries.forEach(e => {
-    const t = totalIncome(e);
-    totE += e.elec||0; totR += e.recRev||0; totT += t;
-    const recStatus = e.recRev > 0 ? '<span class="badge ok">판매완료</span>' : (e.recQty ? '<span class="badge pending">미판매</span>' : '<span class="badge empty">-</span>');
-    tableHtml += `<tr>
-      <td>${e.year}년 ${e.month}월</td>
-      <td>${numFmt(wan(e.elec))}만</td>
-      <td>${e.recRev ? numFmt(wan(e.recRev))+'만' : '<span style="color:var(--text3)">-</span>'}</td>
-      <td style="color:var(--solar)">${numFmt(wan(t))}만</td>
-      <td>${e.prod ? e.prod.toLocaleString()+' kWh' : '-'}</td>
-      <td>${e.smp ? e.smp+' 원' : '-'}</td>
-      <td>${e.recQty || '-'}</td>
-      <td>${recStatus}</td>
-    </tr>`;
+  let h=`<thead><tr><th>월</th><th>전기료수입</th><th>REC수입</th><th>합계</th><th>생산량</th><th>SMP단가</th><th>REC수량</th><th>상태</th></tr></thead><tbody>`;
+  let tE=0,tR=0,tT=0;
+  ents.forEach(e=>{const t2=totalIncome(e);tE+=e.elec||0;tR+=e.recRev||0;tT+=t2;
+    const rs=e.recRev>0?'<span class="badge ok">판매완료</span>':(e.recQty?'<span class="badge pending">미판매</span>':'<span class="badge empty">-</span>');
+    h+=`<tr><td>${e.year}년 ${e.month}월</td><td>${e.elec?nFmt(wan(e.elec))+'만':'-'}</td><td>${e.recRev?nFmt(wan(e.recRev))+'만':'<span style="color:var(--text3)">-</span>'}</td><td style="color:var(--solar);font-weight:700">${nFmt(wan(t2))}만</td><td>${e.prod?e.prod.toLocaleString()+' kWh':'-'}</td><td>${e.smp?e.smp+' 원':'-'}</td><td>${e.recQty||'-'}</td><td>${rs}</td></tr>`;
   });
-  tableHtml += `</tbody><tfoot><tr class="total-row"><td>합계</td><td>${wanFmt(wan(totE))}</td><td>${wanFmt(wan(totR))}</td><td>${wanFmt(wan(totT))}</td><td colspan="4"></td></tr></tfoot>`;
-  document.getElementById('summaryTable').innerHTML = tableHtml;
+  h+=`</tbody><tfoot><tr><td>합 계</td><td>${wanFmt(wan(tE))}</td><td>${wanFmt(wan(tR))}</td><td>${wanFmt(wan(tT))}</td><td colspan="4"></td></tr></tfoot>`;
+  document.getElementById('summaryTable').innerHTML=h;
 }
 
-function renderInsights(entries, total) {
-  const insights = [];
-  const goal = (db.settings.goal||4000)*10000;
-  const pct = total/goal*100;
-  const months_passed = entries.length;
+// ═══════════ INPUT ═══════════
+let elecManual=false, recManual=false;
 
-  // SMP trend
-  const smpEntries = entries.filter(e => e.smp);
-  if(smpEntries.length >= 2) {
-    const last = smpEntries[smpEntries.length-1];
-    const prev = smpEntries[smpEntries.length-2];
-    const d = ((last.smp-prev.smp)/prev.smp*100).toFixed(1);
-    insights.push({ type: parseFloat(d)>=0?'green':'red', title:'SMP 단가 추세', body:`${prev.month}월 ${prev.smp}원 → ${last.month}월 <strong>${last.smp}원</strong> (${parseFloat(d)>=0?'+':''}${d}%)` });
-  }
-
-  // REC pending
-  const pendingRec = entries.filter(e => e.recQty && !e.recRev);
-  if(pendingRec.length > 0) {
-    insights.push({ type:'yellow', title:'REC 미판매 주의', body:`${pendingRec.map(e=>e.month+'월').join(', ')} REC 수익 미확정. 단가 추이 확인 후 판매 시점 결정 권장.` });
-  }
-
-  // Pace
-  const avgPerMonth = total/months_passed;
-  const projectedTotal = avgPerMonth*12;
-  const projPct = (projectedTotal/goal*100).toFixed(0);
-  insights.push({ type: projectedTotal>=goal?'green':'blue', title:'연간 페이스 분석', body:`현재 월평균 <strong>${wanFmt(wan(avgPerMonth))}</strong>. 이 속도면 연간 <strong>${wanFmt(wan(projectedTotal))}</strong> 예상 (목표 ${projPct}%)` });
-
-  // Production growth
-  const prodEntries = entries.filter(e => e.prod);
-  if(prodEntries.length >= 2) {
-    const lp = prodEntries[prodEntries.length-1];
-    const pp = prodEntries[prodEntries.length-2];
-    const pd = ((lp.prod-pp.prod)/pp.prod*100).toFixed(1);
-    insights.push({ type:'blue', title:'생산량 변화', body:`${pp.month}월 ${pp.prod.toLocaleString()}kWh → ${lp.month}월 <strong>${lp.prod.toLocaleString()}kWh</strong> (${parseFloat(pd)>=0?'+':''}${pd}%)` });
-  }
-
-  // Best month
-  const best = [...entries].sort((a,b) => totalIncome(b)-totalIncome(a))[0];
-  if(best) insights.push({ type:'yellow', title:'최고 수익 월', body:`<strong>${best.month}월</strong>이 ${wanFmt(wan(totalIncome(best)))}으로 최고 성과. 해당월 SMP ${best.smp||'-'}원` });
-
-  // Remaining
-  const remain = Math.max(0, goal-total);
-  const monthsLeft = 12-months_passed;
-  if(monthsLeft > 0) insights.push({ type:'blue', title:'남은 목표 달성 계획', body:`잔여 <strong>${wanFmt(wan(remain))}</strong>을 ${monthsLeft}개월에 달성하려면 월 <strong>${wanFmt(wan(remain/monthsLeft))}</strong> 필요.` });
-
-  document.getElementById('insightGrid').style.gridTemplateColumns = `repeat(${Math.min(3,insights.length)}, 1fr)`;
-  document.getElementById('insightGrid').innerHTML = insights.map(i =>
-    `<div class="insight ${i.type}"><div class="insight-title">${i.title}</div><div class="insight-body">${i.body}</div></div>`
-  ).join('');
+function autoElec(){
+  if(elecManual) return;
+  const prod=parseFloat(document.getElementById('fProd').value);
+  const smp =parseFloat(document.getElementById('fSmp').value);
+  const el  =document.getElementById('fElec');
+  if(prod>0&&smp>0){ el.value=Math.round(prod*smp); el.classList.add('auto'); }
+  else { el.value=''; el.classList.remove('auto'); }
+}
+function autoRec(){
+  if(recManual) return;
+  const qty  =parseFloat(document.getElementById('fRecQty').value);
+  const price=parseFloat(document.getElementById('fRecPrice').value);
+  const el   =document.getElementById('fRecRev');
+  if(qty>0&&price>0){ el.value=Math.round(qty*price); el.classList.add('auto'); }
+  else { el.value=''; el.classList.remove('auto'); }
 }
 
-// ======= INPUT PAGE =======
-function renderInput() {
-  const yearSel = document.getElementById('inputYear');
-  const monSel = document.getElementById('inputMonth');
-  if(!yearSel.options.length) {
-    [2024,2025,2026,2027].forEach(y => yearSel.add(new Option(y,y)));
-    yearSel.value = 2026;
-    months.forEach((m,i) => monSel.add(new Option(m, i+1)));
-    monSel.value = new Date().getMonth()+1;
+function renderInput(){
+  const yr=document.getElementById('inputYear'), mo=document.getElementById('inputMonth');
+  if(!yr.options.length){
+    [2024,2025,2026,2027,2028].forEach(y=>yr.add(new Option(y,y))); yr.value=2026;
+    MO.forEach((m,i)=>mo.add(new Option(m,i+1))); mo.value=new Date().getMonth()+1;
   }
   renderMonthList();
 }
-
-function renderMonthList() {
-  const entries = getEntries();
-  document.getElementById('monthList').innerHTML = entries.length ? entries.map(e => {
-    const t = totalIncome(e);
-    return `<div class="month-entry" onclick="selectMonth(${e.year},${e.month})">
-      <div class="month-entry-label">${e.year}/${e.month}월</div>
-      <div class="month-entry-info">
-        <span><div>수입합계</div><div class="val">${wanFmt(wan(t))}</div></span>
+function renderMonthList(){
+  const ents=[...entries()].reverse();
+  document.getElementById('monthList').innerHTML=ents.length?ents.map(e=>`
+    <div class="mentry" onclick="selectMonth(${e.year},${e.month})">
+      <div class="mentry-label">${e.year}/${e.month}월</div>
+      <div class="mentry-info">
+        <span><div>합계</div><div class="val">${wanFmt(wan(totalIncome(e)))}</div></span>
         <span><div>전기료</div><div class="val">${wanFmt(wan(e.elec))}</div></span>
-        <span><div>REC</div><div class="val">${e.recRev ? wanFmt(wan(e.recRev)) : '미확정'}</div></span>
+        <span><div>REC</div><div class="val">${e.recRev?wanFmt(wan(e.recRev)):'미확정'}</div></span>
       </div>
-    </div>`;
-  }).join('') : '<div style="color:var(--text3);font-size:13px;padding:12px 0;">입력된 데이터가 없습니다.</div>';
+    </div>`).join(''):'<div style="color:var(--text3);font-size:13px;padding:8px 0">입력된 데이터가 없습니다.</div>';
 }
-
-function selectMonth(y,m) {
-  document.getElementById('inputYear').value = y;
-  document.getElementById('inputMonth').value = m;
+function selectMonth(y,m){
+  document.getElementById('inputYear').value=y;
+  document.getElementById('inputMonth').value=m;
   loadMonthData();
 }
-
-function loadMonthData() {
-  const y = +document.getElementById('inputYear').value;
-  const m = +document.getElementById('inputMonth').value;
-  const e = getEntry(y,m);
-  if(e) {
-    document.getElementById('fProd').value = e.prod||'';
-    document.getElementById('fSmp').value = e.smp||'';
-    document.getElementById('fElec').value = e.elec||'';
-    document.getElementById('fRecQty').value = e.recQty||'';
-    document.getElementById('fRecPrice').value = e.recPrice||'';
-    document.getElementById('fRecRev').value = e.recRev||'';
-    document.getElementById('fMktSmp').value = e.mktSmp||'';
-    document.getElementById('fSun').value = e.sun||'';
-    document.getElementById('fNote').value = e.note||'';
-    showToast(`${y}년 ${m}월 데이터 불러옴`, 'success');
-  } else {
-    clearForm();
-  }
+function loadMonthData(){
+  const y=+document.getElementById('inputYear').value, m=+document.getElementById('inputMonth').value;
+  const e=getEntry(y,m);
+  elecManual=false; recManual=false;
+  ['fElec','fRecRev'].forEach(id=>document.getElementById(id).classList.remove('auto'));
+  if(e){
+    document.getElementById('fProd').value=e.prod||'';
+    document.getElementById('fSmp').value=e.smp||'';
+    document.getElementById('fElec').value=e.elec||'';
+    document.getElementById('fRecQty').value=e.recQty||'';
+    document.getElementById('fRecPrice').value=e.recPrice||'';
+    document.getElementById('fRecRev').value=e.recRev||'';
+    document.getElementById('fMktSmp').value=e.mktSmp||'';
+    document.getElementById('fSun').value=e.sun||'';
+    document.getElementById('fNote').value=e.note||'';
+    if(e.prod&&e.smp&&e.elec) document.getElementById('fElec').classList.add('auto');
+    if(e.recQty&&e.recPrice&&e.recRev) document.getElementById('fRecRev').classList.add('auto');
+    showToast(`${y}년 ${m}월 데이터 불러옴`,'success');
+  } else { clearForm(); }
 }
-
-function autoCalc() {
-  const prod = +document.getElementById('fProd').value;
-  const smp  = +document.getElementById('fSmp').value;
-  if(prod && smp && !document.getElementById('fElec').value) {
-    document.getElementById('fElec').value = Math.round(prod*smp);
-  }
+function saveMonth(){
+  const y=+document.getElementById('inputYear').value, m=+document.getElementById('inputMonth').value;
+  const prod=document.getElementById('fProd').value, smp=document.getElementById('fSmp').value;
+  let elec=+document.getElementById('fElec').value||0;
+  if(!elec&&prod&&smp) elec=Math.round(+prod*+smp);
+  const recQty=document.getElementById('fRecQty').value, recPrice=document.getElementById('fRecPrice').value;
+  let recRev=+document.getElementById('fRecRev').value||0;
+  if(!recRev&&recQty&&recPrice) recRev=+recQty*+recPrice;
+  cp().entries[`${y}-${m}`]={year:y,month:m,
+    prod:prod?+prod:null,smp:smp?+smp:null,elec:elec||null,
+    recQty:recQty?+recQty:null,recPrice:recPrice?+recPrice:null,recRev:recRev||0,
+    mktSmp:document.getElementById('fMktSmp').value?+document.getElementById('fMktSmp').value:null,
+    sun:document.getElementById('fSun').value?+document.getElementById('fSun').value:null,
+    note:document.getElementById('fNote').value};
+  saveDB(); renderMonthList(); showToast(`${y}년 ${m}월 저장 완료!`,'success');
 }
-
-function autoCalcRec() {
-  const qty = +document.getElementById('fRecQty').value;
-  const price = +document.getElementById('fRecPrice').value;
-  if(qty && price && !document.getElementById('fRecRev').value) {
-    document.getElementById('fRecRev').value = qty*price;
-  }
+function deleteMonth(){
+  const y=+document.getElementById('inputYear').value, m=+document.getElementById('inputMonth').value;
+  if(!getEntry(y,m)){showToast('삭제할 데이터가 없습니다.','error');return;}
+  if(!confirm(`${y}년 ${m}월을 삭제하시겠습니까?`)) return;
+  delete cp().entries[`${y}-${m}`]; saveDB(); clearForm(); renderMonthList(); showToast(`${y}년 ${m}월 삭제됨`,'success');
 }
-
-function saveMonth() {
-  const y = +document.getElementById('inputYear').value;
-  const m = +document.getElementById('inputMonth').value;
-  const prod = document.getElementById('fProd').value;
-  const smp  = document.getElementById('fSmp').value;
-  let elec   = +document.getElementById('fElec').value || 0;
-  if(!elec && prod && smp) elec = Math.round(+prod * +smp);
-  const recQty   = document.getElementById('fRecQty').value;
-  const recPrice = document.getElementById('fRecPrice').value;
-  let recRev     = +document.getElementById('fRecRev').value || 0;
-  if(!recRev && recQty && recPrice) recRev = +recQty * +recPrice;
-
-  db.entries[`${y}-${m}`] = {
-    year:y, month:m,
-    prod: prod ? +prod : null,
-    smp: smp ? +smp : null,
-    elec: elec||null,
-    recQty: recQty ? +recQty : null,
-    recPrice: recPrice ? +recPrice : null,
-    recRev: recRev||0,
-    mktSmp: document.getElementById('fMktSmp').value ? +document.getElementById('fMktSmp').value : null,
-    sun: document.getElementById('fSun').value ? +document.getElementById('fSun').value : null,
-    note: document.getElementById('fNote').value
-  };
-  save();
-  renderMonthList();
-  showToast(`${y}년 ${m}월 저장 완료!`, 'success');
-}
-
-function deleteMonth() {
-  const y = +document.getElementById('inputYear').value;
-  const m = +document.getElementById('inputMonth').value;
-  if(!db.entries[`${y}-${m}`]) { showToast('삭제할 데이터가 없습니다.', 'error'); return; }
-  if(!confirm(`${y}년 ${m}월 데이터를 삭제하시겠습니까?`)) return;
-  delete db.entries[`${y}-${m}`];
-  save(); clearForm(); renderMonthList();
-  showToast(`${y}년 ${m}월 삭제됨`, 'success');
-}
-
-function clearForm() {
-  ['fProd','fSmp','fElec','fRecQty','fRecPrice','fRecRev','fMktSmp','fSun','fNote'].forEach(id => document.getElementById(id).value='');
-}
-
-function exportData() {
-  const blob = new Blob([JSON.stringify(db, null, 2)], {type:'application/json'});
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `solar_data_${Date.now()}.json`; a.click();
-}
-function importData(input) {
-  const file = input.files[0]; if(!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    try { db = JSON.parse(e.target.result); save(); renderMonthList(); showToast('데이터 가져오기 완료!','success'); } catch { showToast('파일 형식 오류','error'); }
-  };
-  reader.readAsText(file);
-}
-
-// ======= SMP PAGE =======
-function renderSmp() {
-  const entries = getEntries();
-  const smpEntries = entries.filter(e => e.smp);
-  const labels = smpEntries.map(e => `${e.month}월`);
-
-  makeChart('smpLineChart', {
-    type:'line',
-    data:{ labels, datasets:[
-      { label:'우리 SMP', data: smpEntries.map(e=>e.smp), borderColor:'#f0a500', backgroundColor:'rgba(240,165,0,0.08)', fill:true, tension:0.4, pointBackgroundColor:'#f0a500', pointRadius:6 },
-      { label:'시장평균', data: smpEntries.map(e=>e.mktSmp||null), borderColor:'rgba(88,166,255,0.7)', borderDash:[4,4], tension:0.4, pointBackgroundColor:'#58a6ff', pointRadius:4, spanGaps:false }
-    ]},
-    options:{ ...chartDefaults, scales:{ x:{...chartDefaults.scales.x}, y:{...chartDefaults.scales.y, ticks:{...chartDefaults.scales.y.ticks, callback:v=>v+'원'}} },
-      plugins:{...chartDefaults.plugins,tooltip:{...chartDefaults.plugins.tooltip,callbacks:{label:i=>`${i.dataset.label}: ${i.raw}원/kWh`}}} }
+function clearForm(){
+  elecManual=false; recManual=false;
+  ['fProd','fSmp','fElec','fRecQty','fRecPrice','fRecRev','fMktSmp','fSun','fNote'].forEach(id=>{
+    const el=document.getElementById(id); el.value=''; el.classList.remove('auto');
   });
-
-  makeChart('smpRevenueChart', {
-    type:'bar',
-    data:{ labels: entries.map(e=>`${e.month}월`), datasets:[
-      { label:'전기료수입', data: entries.map(e=>wan(e.elec)), backgroundColor:'rgba(240,165,0,0.7)', borderRadius:4 }
-    ]},
-    options:{ ...chartDefaults, scales:{x:{...chartDefaults.scales.x},y:{...chartDefaults.scales.y,ticks:{...chartDefaults.scales.y.ticks,callback:v=>v+'만'}}},
-      plugins:{...chartDefaults.plugins,tooltip:{...chartDefaults.plugins.tooltip,callbacks:{label:i=>`${i.raw}만원`}}} }
-  });
-
-  makeChart('prodChart', {
-    type:'bar',
-    data:{ labels: entries.map(e=>`${e.month}월`), datasets:[
-      { label:'생산량', data: entries.map(e=>e.prod), backgroundColor:'rgba(88,166,255,0.6)', borderRadius:4 }
-    ]},
-    options:{ ...chartDefaults, scales:{x:{...chartDefaults.scales.x},y:{...chartDefaults.scales.y,ticks:{...chartDefaults.scales.y.ticks,callback:v=>v?v.toLocaleString():''}}},
-      plugins:{...chartDefaults.plugins,tooltip:{...chartDefaults.plugins.tooltip,callbacks:{label:i=>`${i.raw?.toLocaleString()} kWh`}}} }
-  });
-
-  // SMP compare
-  const compareItems = smpEntries.filter(e => e.mktSmp);
-  document.getElementById('smpCompareRow').innerHTML = compareItems.length ? compareItems.map(e => {
-    const diff = (e.smp - e.mktSmp).toFixed(2);
-    const isUp = parseFloat(diff) >= 0;
-    return `<div class="smp-compare-item">
-      <div class="smp-compare-month">${e.year}년 ${e.month}월</div>
-      <div class="smp-compare-mine">${e.smp} 원/kWh</div>
-      <div class="smp-compare-market">시장평균: ${e.mktSmp} 원/kWh</div>
-      <div class="smp-compare-diff ${isUp?'up':'dn'}">${isUp?'▲ 시장보다 ':'▼ 시장보다 '}${Math.abs(diff)}원 ${isUp?'높음':'낮음'}</div>
-    </div>`;
-  }).join('') : '<div style="color:var(--text3);font-size:13px;padding:8px 0;">데이터 입력 시 시장 평균 SMP를 함께 입력하면 비교 분석이 가능합니다.</div>';
+}
+function exportData(){
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([JSON.stringify(db,null,2)],{type:'application/json'}));
+  a.download=`solar_data_${Date.now()}.json`; a.click();
+}
+function importData(input){
+  const f=input.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=e=>{try{db=JSON.parse(e.target.result);saveDB();rebuildPlantSel();renderDash();showToast('가져오기 완료!','success');}catch{showToast('파일 형식 오류','error');}};
+  r.readAsText(f); input.value='';
+}
+function resetAll(){
+  if(!confirm('모든 데이터를 초기화하시겠습니까?')) return;
+  localStorage.removeItem(KEY); location.reload();
 }
 
-// ======= REC PAGE =======
-function renderRec() {
-  const entries = getEntries();
+// ═══════════ SMP ═══════════
+function renderSmp(){
+  const ents=entries(), smpE=ents.filter(e=>e.smp), lbs=smpE.map(e=>`${e.month}월`);
+  mkChart('smpLineChart',{type:'line',data:{labels:lbs,datasets:[
+    {label:'우리 SMP',data:smpE.map(e=>e.smp),borderColor:'#e8920a',backgroundColor:'rgba(232,146,10,.07)',fill:true,tension:.4,pointBackgroundColor:'#e8920a',pointRadius:6},
+    {label:'시장평균',data:smpE.map(e=>e.mktSmp||null),borderColor:'rgba(47,110,245,.7)',borderDash:[4,4],tension:.4,pointBackgroundColor:'#2f6ef5',pointRadius:4,spanGaps:false}
+  ]},options:{...CD,scales:{x:{...CD.scales.x},y:{...CD.scales.y,ticks:{...CD.scales.y.ticks,callback:v=>v+'원'}}},
+    plugins:{...CD.plugins,tooltip:{...CD.plugins.tooltip,callbacks:{label:i=>`${i.dataset.label}: ${i.raw}원/kWh`}}}}});
+  mkChart('smpRevChart',{type:'bar',data:{labels:ents.map(e=>`${e.month}월`),datasets:[{label:'전기료수입',data:ents.map(e=>wan(e.elec)),backgroundColor:'rgba(232,146,10,.7)',borderRadius:5}]},
+    options:{...CD,scales:{x:{...CD.scales.x},y:{...CD.scales.y,ticks:{...CD.scales.y.ticks,callback:v=>v+'만'}}},
+      plugins:{...CD.plugins,tooltip:{...CD.plugins.tooltip,callbacks:{label:i=>`${i.raw}만원`}}}}});
+  mkChart('prodChart',{type:'bar',data:{labels:ents.map(e=>`${e.month}월`),datasets:[{label:'생산량',data:ents.map(e=>e.prod),backgroundColor:'rgba(47,110,245,.6)',borderRadius:5}]},
+    options:{...CD,scales:{x:{...CD.scales.x},y:{...CD.scales.y,ticks:{...CD.scales.y.ticks,callback:v=>v?v.toLocaleString():''}}},
+      plugins:{...CD.plugins,tooltip:{...CD.plugins.tooltip,callbacks:{label:i=>`${i.raw?.toLocaleString()||0} kWh`}}}}});
+  const cmp=smpE.filter(e=>e.mktSmp);
+  document.getElementById('smpCmpRow').innerHTML=cmp.length?cmp.map(e=>{
+    const d=(e.smp-e.mktSmp).toFixed(2);
+    return `<div class="smp-item"><div class="smp-month">${e.year}년 ${e.month}월</div><div class="smp-mine">${e.smp} 원/kWh</div><div class="smp-mkt">시장평균: ${e.mktSmp} 원</div><div class="smp-diff ${parseFloat(d)>=0?'up':'dn'}">${parseFloat(d)>=0?'▲ ':'▼ '}${Math.abs(d)}원 ${parseFloat(d)>=0?'높음':'낮음'}</div></div>`;
+  }).join(''):'<div style="color:var(--text3);font-size:13px">시장 평균 SMP를 입력하면 비교가 표시됩니다.</div>';
+}
 
-  // REC insights
-  const recEntries = entries.filter(e => e.recQty||e.recRev);
-  const totalRecRev = entries.reduce((s,e)=>s+(e.recRev||0),0);
-  const totalRecQty = entries.reduce((s,e)=>s+(e.recQty||0),0);
-  const avgRecPrice = recEntries.filter(e=>e.recPrice).reduce((s,e)=>s+e.recPrice,0)/recEntries.filter(e=>e.recPrice).length||0;
-  const pendingRec = entries.filter(e => e.recQty && !e.recRev);
-
-  document.getElementById('recInsightGrid').innerHTML = `
-    <div class="insight green"><div class="insight-title">총 REC 수입</div><div class="insight-body"><strong>${wanFmt(wan(totalRecRev))}</strong></div></div>
-    <div class="insight blue"><div class="insight-title">총 REC 거래량</div><div class="insight-body"><strong>${totalRecQty}개</strong> / 평균단가 ${avgRecPrice ? Math.round(avgRecPrice).toLocaleString()+'원' : '-'}</div></div>
-    <div class="insight ${pendingRec.length?'yellow':'green'}"><div class="insight-title">미판매 현황</div><div class="insight-body">${pendingRec.length ? `<strong>${pendingRec.map(e=>e.month+'월').join(', ')}</strong> REC 판매 대기` : '모든 REC 판매 완료'}</div></div>
+// ═══════════ REC ═══════════
+function renderRec(){
+  const ents=entries();
+  const totRR=ents.reduce((s,e)=>s+(e.recRev||0),0);
+  const totRQ=ents.reduce((s,e)=>s+(e.recQty||0),0);
+  const rWP=ents.filter(e=>e.recPrice);
+  const avgRP=rWP.length?rWP.reduce((s,e)=>s+e.recPrice,0)/rWP.length:0;
+  const pRec=ents.filter(e=>e.recQty&&!e.recRev);
+  document.getElementById('recInsGrid').innerHTML=`
+    <div class="ins green"><div class="ins-title">총 REC 수입</div><div class="ins-body"><strong>${wanFmt(wan(totRR))}</strong></div></div>
+    <div class="ins blue"><div class="ins-title">총 REC 거래량</div><div class="ins-body"><strong>${totRQ}개</strong> / 평균단가 ${avgRP?Math.round(avgRP).toLocaleString()+'원':'-'}</div></div>
+    <div class="ins ${pRec.length?'yellow':'green'}"><div class="ins-title">미판매 현황</div><div class="ins-body">${pRec.length?`<strong>${pRec.map(e=>e.month+'월').join(', ')}</strong> 판매 대기`:'모든 REC 판매 완료'}</div></div>
   `;
-
-  const recLabels = entries.filter(e=>e.recQty).map(e=>`${e.month}월`);
-  const recQtyData = entries.filter(e=>e.recQty).map(e=>e.recQty);
-  const recPriceData = entries.filter(e=>e.recQty).map(e=>e.recPrice ? e.recPrice/100 : null);
-
-  makeChart('recChart', {
-    type:'bar',
-    data:{ labels:recLabels, datasets:[
-      { label:'REC수량', data:recQtyData, backgroundColor:'rgba(63,185,80,0.7)', borderRadius:4, yAxisID:'y' },
-      { label:'단가(÷100)', data:recPriceData, backgroundColor:'rgba(210,153,34,0.5)', borderRadius:4, yAxisID:'y2' }
-    ]},
-    options:{ ...chartDefaults,
-      scales:{
-        x:{...chartDefaults.scales.x},
-        y:{...chartDefaults.scales.y,position:'left',ticks:{...chartDefaults.scales.y.ticks,callback:v=>v+'개'}},
-        y2:{...chartDefaults.scales.y,position:'right',ticks:{...chartDefaults.scales.y.ticks,callback:v=>v+'백원'},grid:{display:false}}
-      },
-      plugins:{...chartDefaults.plugins,tooltip:{...chartDefaults.plugins.tooltip,callbacks:{label:i=>i.datasetIndex===0?`REC: ${i.raw}개`:`단가: ${(i.raw*100).toLocaleString()}원`}}}
-    }
-  });
-
-  makeChart('recRevChart', {
-    type:'bar',
-    data:{ labels: entries.map(e=>`${e.month}월`), datasets:[
-      { label:'REC수입', data: entries.map(e=>wan(e.recRev)), backgroundColor: entries.map(e=>e.recRev?'rgba(63,185,80,0.7)':'rgba(139,148,158,0.2)'), borderRadius:4 }
-    ]},
-    options:{ ...chartDefaults, scales:{x:{...chartDefaults.scales.x},y:{...chartDefaults.scales.y,ticks:{...chartDefaults.scales.y.ticks,callback:v=>v+'만'}}},
-      plugins:{...chartDefaults.plugins,tooltip:{...chartDefaults.plugins.tooltip,callbacks:{label:i=>`${i.raw||0}만원`}}} }
-  });
-
-  // REC optimize
-  const recWithPrice = recEntries.filter(e=>e.recPrice).sort((a,b)=>b.recPrice-a.recPrice);
-  document.getElementById('recOptimizeContent').innerHTML = recWithPrice.length ?
-    `<div class="rec-opt-grid">${recWithPrice.map(e=>`
-      <div class="rec-opt">
-        <div class="rec-opt-month">${e.year}년 ${e.month}월</div>
-        <div class="rec-opt-val">${e.recPrice.toLocaleString()}원/REC</div>
-        <div class="rec-opt-rec">${e.recQty}개 → ${wanFmt(wan(e.recRev))}</div>
-        ${e.recRev ? '<div style="font-size:10px;color:var(--rec);margin-top:3px;">✓ 판매완료</div>' : '<div style="font-size:10px;color:var(--warn);margin-top:3px;">⏳ 미판매</div>'}
-      </div>`).join('')}</div>
-      <div style="font-size:12px;color:var(--text3);margin-top:12px;">💡 REC 단가가 높은 달에 미판매 REC를 집중 판매하면 수익 최대화가 가능합니다. 시장 단가 추이를 지속 모니터링하세요.</div>` :
-    '<div style="color:var(--text3);font-size:13px;">REC 단가 데이터를 입력하면 최적 판매 타이밍 분석이 가능합니다.</div>';
-
-  // Pending
-  document.getElementById('recPendingContent').innerHTML = pendingRec.length ?
-    `<table class="data-table"><thead><tr><th>월</th><th>REC 수량</th><th>예상 단가</th><th>예상 수익</th><th>상태</th></tr></thead><tbody>
-    ${pendingRec.map(e=>`<tr>
-      <td>${e.year}년 ${e.month}월</td>
-      <td>${e.recQty}개</td>
-      <td>${e.recPrice ? e.recPrice.toLocaleString()+'원' : '미입력'}</td>
-      <td>${e.recPrice ? wanFmt(wan(e.recQty*e.recPrice)) : '-'}</td>
-      <td><span class="badge pending">판매 대기</span></td>
-    </tr>`).join('')}
-    </tbody></table>` :
-    '<div style="color:var(--text3);font-size:13px;padding:8px 0;">미판매 REC 없음</div>';
+  const rE=ents.filter(e=>e.recQty);
+  mkChart('recChart',{type:'bar',data:{labels:rE.map(e=>`${e.month}월`),datasets:[
+    {label:'REC수량',data:rE.map(e=>e.recQty),backgroundColor:'rgba(22,154,70,.7)',borderRadius:4,yAxisID:'y'},
+    {label:'단가÷100',data:rE.map(e=>e.recPrice?e.recPrice/100:null),backgroundColor:'rgba(191,122,24,.45)',borderRadius:4,yAxisID:'y2'}
+  ]},options:{...CD,scales:{x:{...CD.scales.x},y:{...CD.scales.y,position:'left',ticks:{...CD.scales.y.ticks,callback:v=>v+'개'}},
+    y2:{...CD.scales.y,position:'right',ticks:{...CD.scales.y.ticks,callback:v=>v+'백'},grid:{display:false}}},
+    plugins:{...CD.plugins,tooltip:{...CD.plugins.tooltip,callbacks:{label:i=>i.datasetIndex===0?`REC: ${i.raw}개`:`단가: ${(i.raw*100).toLocaleString()}원`}}}}});
+  mkChart('recRevChart',{type:'bar',data:{labels:ents.map(e=>`${e.month}월`),datasets:[{label:'REC수입',data:ents.map(e=>wan(e.recRev)),backgroundColor:ents.map(e=>e.recRev?'rgba(22,154,70,.7)':'rgba(226,230,240,.9)'),borderRadius:4}]},
+    options:{...CD,scales:{x:{...CD.scales.x},y:{...CD.scales.y,ticks:{...CD.scales.y.ticks,callback:v=>v+'만'}}},
+      plugins:{...CD.plugins,tooltip:{...CD.plugins.tooltip,callbacks:{label:i=>`${i.raw||0}만원`}}}}});
+  const sorted=[...rWP].sort((a,b)=>b.recPrice-a.recPrice);
+  document.getElementById('recOptContent').innerHTML=sorted.length?
+    `<div class="rec-grid">${sorted.map(e=>`<div class="rec-card"><div class="rec-mon">${e.year}년 ${e.month}월</div><div class="rec-val">${e.recPrice.toLocaleString()}원/REC</div><div class="rec-rev">${e.recQty}개 → ${wanFmt(wan(e.recRev))}</div><div class="rec-st" style="color:${e.recRev?'var(--rec)':'var(--warn)'}">${e.recRev?'✓ 판매완료':'⏳ 미판매'}</div></div>`).join('')}</div><div style="font-size:12px;color:var(--text3);margin-top:12px">💡 단가가 높은 달에 미판매 REC를 집중 판매하면 수익을 최대화할 수 있습니다.</div>`:
+    '<div style="color:var(--text3);font-size:13px">REC 단가 데이터를 입력하면 최적 판매 타이밍을 분석합니다.</div>';
+  document.getElementById('recPendContent').innerHTML=pRec.length?
+    `<div style="overflow-x:auto"><table class="dtable"><thead><tr><th>월</th><th>REC 수량</th><th>예상 단가</th><th>예상 수익</th><th>상태</th></tr></thead><tbody>
+    ${pRec.map(e=>`<tr><td>${e.year}년 ${e.month}월</td><td>${e.recQty}개</td><td>${e.recPrice?e.recPrice.toLocaleString()+'원':'미입력'}</td><td>${e.recPrice?wanFmt(wan(e.recQty*e.recPrice)):'-'}</td><td><span class="badge pending">판매 대기</span></td></tr>`).join('')}
+    </tbody></table></div>`:
+    '<div style="color:var(--text3);font-size:13px;padding:8px 0">미판매 REC 없음</div>';
 }
 
-// ======= FORECAST PAGE =======
-function renderForecast() {
-  const entries = getEntries();
-  const goal = (db.settings.goal||4000)*10000;
-  const total = entries.reduce((s,e)=>s+totalIncome(e),0);
-  const remain = Math.max(0, goal-total);
-  const months_passed = entries.length;
-  const months_left = 12 - months_passed;
-  const avgPerMonth = months_passed ? total/months_passed : 0;
-  const projected = avgPerMonth * 12;
-
-  // KPI
-  document.getElementById('forecastKpi').innerHTML = `
-    <div class="kpi-card"><div class="kpi-label">연간 예상 수입</div><div class="kpi-value" style="color:${projected>=goal?'var(--rec)':'var(--warn)'}">${wanFmt(wan(projected))}</div><div class="kpi-sub">현재 페이스 기준</div></div>
-    <div class="kpi-card"><div class="kpi-label">잔여 달성 필요</div><div class="kpi-value">${wanFmt(wan(remain))}</div><div class="kpi-sub">${months_left}개월 남음</div></div>
-    <div class="kpi-card"><div class="kpi-label">월 필요 수익</div><div class="kpi-value">${months_left>0?wanFmt(wan(remain/months_left)):'-'}</div><div class="kpi-sub">목표 달성을 위한 월평균</div></div>
-    <div class="kpi-card"><div class="kpi-label">목표 달성 가능성</div><div class="kpi-value" style="color:${projected>=goal?'var(--rec)':'var(--warn)'}">${projected>=goal?'✓ 달성 가능':'⚠ 점검 필요'}</div><div class="kpi-sub">${Math.round(projected/goal*100)}% 예상</div></div>
+// ═══════════ FORECAST ═══════════
+function renderForecast(){
+  const ents=entries(), p=cp(), goal=(p.goal||4000)*10000;
+  const tot=ents.reduce((s,e)=>s+totalIncome(e),0);
+  const remain=Math.max(0,goal-tot), mp=ents.length, ml=12-mp;
+  const avg=mp?tot/mp:0, proj=avg*12;
+  document.getElementById('fcastKpi').innerHTML=`
+    <div class="kpi-card"><div class="kpi-label">연간 예상 수입</div><div class="kpi-value" style="color:${proj>=goal?'var(--rec)':'var(--warn)'}">${wanFmt(wan(proj))}</div><div class="kpi-sub">현재 페이스 기준</div></div>
+    <div class="kpi-card"><div class="kpi-label">잔여 달성 필요</div><div class="kpi-value">${wanFmt(wan(remain))}</div><div class="kpi-sub">${ml}개월 남음</div></div>
+    <div class="kpi-card"><div class="kpi-label">월 필요 수익</div><div class="kpi-value">${ml>0?wanFmt(wan(remain/ml)):'-'}</div><div class="kpi-sub">목표 달성 월평균</div></div>
+    <div class="kpi-card"><div class="kpi-label">목표 달성 가능성</div><div class="kpi-value" style="color:${proj>=goal?'var(--rec)':'var(--warn)'}">${proj>=goal?'✓ 달성 가능':'⚠ 점검 필요'}</div><div class="kpi-sub">${Math.round(proj/goal*100)}% 예상</div></div>
   `;
-
-  // Forecast chart: actual + projected
-  const allMonthLabels = months.slice(0,12);
-  const actualData = Array(12).fill(null);
-  entries.forEach(e => { actualData[e.month-1] = wan(totalIncome(e)); });
-
-  // Projected: use seasonal index + avg
-  const avgSmpEntries = entries.filter(e=>e.smp);
-  const avgSmp = avgSmpEntries.length ? avgSmpEntries.reduce((s,e)=>s+e.smp,0)/avgSmpEntries.length : 110;
-  const avgProd = entries.filter(e=>e.prod).reduce((s,e,_,a)=>s+e.prod/a.length,0) || 13000;
-  const avgRecPerMonth = entries.reduce((s,e)=>s+(e.recRev||0),0)/(months_passed||1);
-  const projData = Array(12).fill(null);
-  for(let i=months_passed;i<12;i++) {
-    const est = Math.round((avgProd * seasonIdx[i] * avgSmp + avgRecPerMonth) / 10000);
-    projData[i] = est;
+  const actualData=Array(12).fill(null);
+  ents.forEach(e=>{actualData[e.month-1]=wan(totalIncome(e));});
+  const avgSmp=ents.filter(e=>e.smp).reduce((s,e,_,a)=>s+e.smp/a.length,0)||110;
+  const avgPrd=ents.filter(e=>e.prod).reduce((s,e,_,a)=>s+e.prod/a.length,0)||13000;
+  const avgRec=ents.reduce((s,e)=>s+(e.recRev||0),0)/(mp||1);
+  const projData=Array(12).fill(null);
+  for(let i=mp;i<12;i++) projData[i]=Math.round((avgPrd*SI[i]*avgSmp+avgRec)/10000);
+  const gW=p.goal||4000, goalLine=Array(12).fill(Math.round(gW/12));
+  mkChart('fcastChart',{type:'bar',data:{labels:MO,datasets:[
+    {label:'실적',data:actualData,backgroundColor:'rgba(232,146,10,.8)',borderRadius:4},
+    {label:'예측',data:projData,backgroundColor:'rgba(232,146,10,.2)',borderRadius:4,borderColor:'rgba(232,146,10,.45)',borderWidth:1},
+    {type:'line',label:'월목표',data:goalLine,borderColor:'rgba(47,110,245,.45)',borderDash:[5,4],pointRadius:0,tension:0}
+  ]},options:{...CD,scales:{x:{...CD.scales.x},y:{...CD.scales.y,ticks:{...CD.scales.y.ticks,callback:v=>v+'만'}}},
+    plugins:{...CD.plugins,tooltip:{...CD.plugins.tooltip,callbacks:{label:i=>`${i.dataset.label}: ${i.raw}만원`}}}}});
+  let fh='';
+  for(let i=0;i<12;i++){
+    const isA=i<mp,val=isA?actualData[i]:projData[i],pct2=val?Math.round(val/(gW/12)*100):0;
+    fh+=`<div class="fcast-row"><span style="font-size:12px;min-width:26px;color:${isA?'var(--text2)':'var(--text3)'}">${i+1}월</span><div style="flex:1"><div class="prog-wrap" style="height:6px"><div class="prog-bar" style="width:${Math.min(100,pct2)}%;background:${isA?'var(--solar)':'rgba(232,146,10,.28)'}"></div></div></div><span style="font-family:var(--mono);font-size:12px;min-width:46px;text-align:right;color:${isA?'var(--solar)':'var(--text3)'}">${val?val+'만':'-'}</span><span style="font-size:10px;color:var(--text3);min-width:28px">${isA?'실적':'예측'}</span></div>`;
   }
-  const goalLine = Array(12).fill(null).map((_,i)=>Math.round(goal/12/10000));
-
-  makeChart('forecastChart', {
-    type:'bar',
-    data:{ labels:allMonthLabels, datasets:[
-      { label:'실적', data:actualData, backgroundColor:'rgba(240,165,0,0.75)', borderRadius:4 },
-      { label:'예측', data:projData, backgroundColor:'rgba(240,165,0,0.25)', borderRadius:4, borderColor:'rgba(240,165,0,0.4)', borderWidth:1 },
-      { type:'line', label:'월목표', data:goalLine, borderColor:'rgba(88,166,255,0.5)', borderDash:[4,4], pointRadius:0, tension:0 }
-    ]},
-    options:{ ...chartDefaults, scales:{x:{...chartDefaults.scales.x},y:{...chartDefaults.scales.y,ticks:{...chartDefaults.scales.y.ticks,callback:v=>v+'만'}}},
-      plugins:{...chartDefaults.plugins,tooltip:{...chartDefaults.plugins.tooltip,callbacks:{label:i=>`${i.dataset.label}: ${i.raw}만원`}}} }
-  });
-
-  // Monthly forecast list
-  let listHtml = '';
-  for(let i=0;i<12;i++) {
-    const isActual = i < months_passed;
-    const val = isActual ? actualData[i] : projData[i];
-    const pct = val ? Math.round(val/(goal/12/10000)*100) : 0;
-    listHtml += `<div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border)">
-      <span style="font-size:12px;min-width:28px;color:${isActual?'var(--text2)':'var(--text3)'}">${i+1}월</span>
-      <div style="flex:1">
-        <div class="progress-wrap" style="height:6px">
-          <div class="progress-bar" style="width:${Math.min(100,pct)}%;background:${isActual?'var(--solar)':'rgba(240,165,0,0.35)'}"></div>
-        </div>
-      </div>
-      <span style="font-family:var(--mono);font-size:12px;min-width:50px;text-align:right;color:${isActual?'var(--solar)':'var(--text3)'}">${val?val+'만':'-'}</span>
-      <span style="font-size:10px;color:var(--text3);min-width:30px">${isActual?'실적':'예측'}</span>
-    </div>`;
-  }
-  document.getElementById('forecastMonthList').innerHTML = listHtml;
-
-  // Scenarios
-  const goalWan = db.settings.goal||4000;
-  const doneWan = wan(total)||0;
-  const remainWan = Math.max(0, goalWan-doneWan);
-  const scenarios = [
-    { label:'현재 페이스 유지', desc:'월평균 '+wanFmt(wan(avgPerMonth)), proj: Math.round(projected/10000), color: projected>=goal?'var(--rec)':'var(--warn)' },
-    { label:'SMP 10% 상승 시', desc:'단가 상승 + 계절 효과', proj: Math.round(projected*1.1/10000), color:'var(--rec)' },
-    { label:'REC 추가 판매', desc:'미판매 REC 집중 처리', proj: Math.round((projected + entries.filter(e=>e.recQty&&!e.recRev).reduce((s,e)=>s+(e.recQty||0)*(e.recPrice||70600),0))/10000), color:'var(--accent)' },
+  document.getElementById('fcastMonthList').innerHTML=fh;
+  const scenarios=[
+    {l:'현재 페이스 유지',d:'월평균 '+wanFmt(wan(avg)),v:Math.round(proj/10000),c:proj>=goal?'var(--rec)':'var(--warn)'},
+    {l:'SMP 10% 상승 시', d:'단가 상승+계절효과',    v:Math.round(proj*1.1/10000),c:'var(--rec)'},
+    {l:'REC 추가 판매',  d:'미판매 REC 집중 처리',  v:Math.round((proj+ents.filter(e=>e.recQty&&!e.recRev).reduce((s,e)=>s+(e.recQty||0)*(e.recPrice||70600),0))/10000),c:'var(--accent)'},
   ];
-  document.getElementById('scenarioGrid').innerHTML = scenarios.map(s => `
-    <div class="card">
-      <div class="card-title">${s.label}</div>
-      <div style="font-size:22px;font-family:var(--mono);color:${s.color};margin:8px 0">${s.proj.toLocaleString()}만원</div>
-      <div style="font-size:11px;color:var(--text3)">${s.desc}</div>
-      <div style="font-size:11px;margin-top:8px;color:${s.proj>=goalWan?'var(--rec)':'var(--warn)'}">${s.proj>=goalWan?'✓ 목표달성':'목표 대비 '+(goalWan-s.proj).toLocaleString()+'만 부족'}</div>
+  document.getElementById('scenarioGrid').innerHTML=scenarios.map(s=>`<div class="card"><div class="card-title">${s.l}</div><div style="font-size:24px;font-family:var(--mono);color:${s.c};margin:8px 0">${s.v.toLocaleString()}만원</div><div style="font-size:12px;color:var(--text3)">${s.d}</div><div style="font-size:12px;margin-top:8px;color:${s.v>=gW?'var(--rec)':'var(--warn)'}">${s.v>=gW?'✓ 목표달성':'목표 대비 '+(gW-s.v).toLocaleString()+'만 부족'}</div></div>`).join('');
+}
+
+// ═══════════ SETTINGS ═══════════
+function renderSettings(){
+  document.getElementById('plantListUI').innerHTML=Object.values(db.plants).map(p=>`
+    <div class="plant-card">
+      <div class="plant-icon">☀️</div>
+      <div class="plant-info">
+        <div class="plant-name"><span class="plant-dot${p.id===db.currentPlant?'':' off'}"></span>${p.name}${p.id===db.currentPlant?' <span style="font-size:11px;color:var(--rec);font-weight:400">(현재 선택)</span>':''}</div>
+        <div class="plant-meta">용량: ${p.capacity||'-'}kW · 목표: ${(p.goal||4000).toLocaleString()}만원${p.note?' · '+p.note:''}</div>
+      </div>
+      <div class="plant-actions">
+        ${p.id!==db.currentPlant?`<button class="btn btn-secondary btn-sm" onclick="switchPlant('${p.id}');rebuildPlantSel()">선택</button>`:''}
+        <button class="btn btn-secondary btn-sm" onclick="editPlant('${p.id}')">편집</button>
+        ${Object.keys(db.plants).length>1?`<button class="btn btn-danger btn-sm" onclick="delPlant('${p.id}')">삭제</button>`:''}
+      </div>
     </div>`).join('');
-
-  // Settings
-  document.getElementById('fGoal').value = db.settings.goal||4000;
-  document.getElementById('fCapacity').value = db.settings.capacity||100;
+  document.getElementById('fGoal').value=cp().goal||4000;
+  document.getElementById('fCapacity').value=cp().capacity||100;
 }
 
-function saveSettings() {
-  db.settings.goal = +document.getElementById('fGoal').value || 4000;
-  db.settings.capacity = +document.getElementById('fCapacity').value || 100;
-  save();
-  document.getElementById('goalBadge').textContent = `연간목표: ${db.settings.goal.toLocaleString()}만원`;
-  renderForecast();
-  showToast('목표 설정 저장됨', 'success');
+// Plant modal
+let editPid=null;
+function openModal(pid){
+  editPid=pid||null;
+  const pl=pid?db.plants[pid]:null;
+  document.getElementById('modalTitle').textContent=pid?'발전소 편집':'발전소 추가';
+  document.getElementById('mName').value=pl?pl.name:'';
+  document.getElementById('mCap').value=pl?pl.capacity:'';
+  document.getElementById('mGoal').value=pl?pl.goal:'';
+  document.getElementById('mNote').value=pl?pl.note:'';
+  document.getElementById('plantOverlay').classList.add('open');
+}
+function closeModal(){ document.getElementById('plantOverlay').classList.remove('open'); }
+function editPlant(pid){ openModal(pid); }
+function savePlant(){
+  const name=document.getElementById('mName').value.trim();
+  if(!name){showToast('발전소 이름을 입력하세요.','error');return;}
+  if(editPid){
+    Object.assign(db.plants[editPid],{name,capacity:+document.getElementById('mCap').value||100,goal:+document.getElementById('mGoal').value||4000,note:document.getElementById('mNote').value});
+  } else {
+    const id='p_'+Date.now();
+    db.plants[id]={id,name,capacity:+document.getElementById('mCap').value||100,goal:+document.getElementById('mGoal').value||4000,note:document.getElementById('mNote').value,entries:{}};
+  }
+  saveDB(); closeModal(); rebuildPlantSel(); renderSettings();
+  showToast(editPid?'발전소 정보 수정됨':'발전소 추가됨','success');
+}
+function delPlant(pid){
+  if(Object.keys(db.plants).length<=1){showToast('발전소는 최소 1개 필요합니다.','error');return;}
+  if(!confirm(`'${db.plants[pid].name}'을 삭제하시겠습니까?`)) return;
+  delete db.plants[pid];
+  if(db.currentPlant===pid) db.currentPlant=Object.keys(db.plants)[0];
+  saveDB(); rebuildPlantSel(); renderSettings(); updateGoalBadge();
+  showToast('발전소 삭제됨','success');
+}
+function saveSettings(){
+  cp().goal=+document.getElementById('fGoal').value||4000;
+  cp().capacity=+document.getElementById('fCapacity').value||100;
+  saveDB(); updateGoalBadge(); renderSettings();
+  showToast('설정 저장됨','success');
 }
 
-// ======= TOAST =======
-function showToast(msg, type='success') {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.className = `toast ${type} show`;
-  setTimeout(() => t.className='toast', 2800);
+// ═══════════ TOAST ═══════════
+function showToast(msg,type='success'){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className=`toast ${type} show`;
+  setTimeout(()=>t.className='toast',2800);
 }
 
-// ======= INIT =======
-load();
-renderDashboard();
-document.getElementById('goalBadge').textContent = `연간목표: ${(db.settings.goal||4000).toLocaleString()}만원`;
+// ═══════════ INIT ═══════════
+loadDB();
+rebuildPlantSel();
+updateGoalBadge();
+renderDash();
 </script>
 </body>
 </html>
